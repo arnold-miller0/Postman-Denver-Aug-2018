@@ -1,0 +1,3203 @@
+{
+	"info": {
+		"_postman_id": "fdeb44ba-76ea-424b-9a8c-39645bca44b9",
+		"name": "DishAnyWhere_Programs",
+		"description": "Sample API testing \nDishAnyWhere All TV Shows web page  http://www.dishanywhere.com/ondemand/all/shows\nDishAnyWhere All Movies web page  http://www.dishanywhere.com/ondemand/all/movies",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DANY status",
+			"item": [
+				{
+					"name": "status sub-folder",
+					"item": [
+						{
+							"name": "Start DANY status",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c2dbfab2-243c-44c7-b047-caecd51b3728",
+										"type": "text/javascript",
+										"exec": [
+											"var _ = require('lodash');",
+											"",
+											"var reqString = request.name;",
+											"console.log(\"Request: \"+reqString+\" - Pre-request Script\");",
+											"",
+											"// define helper functions ",
+											"postman.setGlobalVariable(\"loadHelpers\", function loadHelpers() {",
+											"  let helpers = {};",
+											" ",
+											"  helpers.CompareSame = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' is '\" + compB +\"'\"] = compA == compB;",
+											"  };",
+											"",
+											"  helpers.CompareEqual = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' eq '\" + compB +\"'\"] = compA === compB;",
+											"  };",
+											"  ",
+											"  helpers.CompareDiff = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' df '\" + compB +\"'\"] = compA != compB;",
+											"  };",
+											"  ",
+											"  helpers.CompareGreater = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' gt '\" + compB +\"'\"] = compA > compB;",
+											"  };",
+											"  ",
+											"  helpers.CompareGreatEq = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' ge '\" + compB +\"'\"] = compA >= compB;",
+											"  };",
+											"  ",
+											"  helpers.CompareLesser = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' lt '\" + compB +\"'\"] = compA < compB;",
+											"  };",
+											"  ",
+											"   helpers.CompareLessEq = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compA + \"' le '\" + compB +\"'\"] = compA <= compB;",
+											"  };",
+											"  ",
+											"  helpers.CompareIncludes = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": has '\" + compB + \"'\"] = compA.includes(compB);",
+											"  };",
+											"  ",
+											"  helpers.CompareInList = function testCompare(compString, compA, compB) {",
+											"    tests[compString + \": '\" + compB + \"' in [\"+compA+\"]\"] = compA.includes(compB);",
+											"  };",
+											"  ",
+											"  // check response status code value",
+											"  helpers.checkStatusCode = function verifyStatusCode(statusCode, msgString = \"\") {",
+											"      helpers.CompareEqual(msgString + \" Status code\",responseCode.code,statusCode);",
+											"  };",
+											" ",
+											"  helpers.checkStatusCodeArray = function verifyCount(statusCodeArray, msgString = \"\") {",
+											"    var testString = msgString + \" Status code '\" + responseCode.code + \"' one of: \"+ statusCodeArray;",
+											"    tests[testString] = Array.isArray(statusCodeArray) && statusCodeArray.includes(responseCode.code);",
+											"  };",
+											" ",
+											"  helpers.checkRespSchema = function verifyRespSchema(",
+											"    respSchema, // JSON response schema to check ",
+											"    expectSchema, // expected macthing schema ",
+											"    InfoString, // information for summary display and mis-matches failures",
+											"    schemaErrorType = false // set schema error-string to more descriptive than default string",
+											"    ) {",
+											"    ",
+											"    if (typeof schemaErrorType == \"boolean\") {",
+											"        postman.setGlobalVariable(\"g_schemaErrorType\", schemaErrorType); ",
+											"    }",
+											"    ",
+											"    // common Format pattern matches functions",
+											"    // when return null - schema passes format",
+											"    // when return string - schema fails format via string",
+											"    tv4.addFormat ( {",
+											"      'date-string': function (data, schema) { ",
+											"        var pattern = /^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)?$/;",
+											"        if (typeof data === 'string' && pattern.test(data) ) {return null;} return \"string '\"+data+\"' not match: \"+pattern; ",
+											"      },",
+											"      'date-string-full': function (data, schema) { ",
+											"        var pattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;",
+											"        if (typeof data === 'string' && pattern.test(data) ) {return null;} return \"string '\"+data+\"' not match: \"+pattern; ",
+											"      },",
+											"      'date-string-short': function (data, schema) { ",
+											"        var pattern = /^\\d{4}-\\d{2}-\\d{2}$/;",
+											"        if (typeof data === 'string' && pattern.test(data) ) {return null;} return \"string '\"+data+\"' not match: \"+pattern; ",
+											"      },",
+											"      'green-red': function (data, schema) { ",
+											"        var pattern = /^(green|red)$/;",
+											"        if (typeof data === 'string' && pattern.test(data) ) {return null;} return \"string '\"+data+\"' not match: \"+pattern; ",
+											"      }",
+											"    });",
+											"    ",
+											"    // set standard tv4 error string ",
+											"    // or override based on global variable to be error.code and schema.id",
+											"    tv4.setErrorReporter(function (error, data, schema) {",
+											"      var errorString = null;",
+											"      if (globals.g_schemaErrorType == \"true\" ) {",
+											"        errorString = \"code: \"+ error.code + \" schema-id: \" + schema.id ;",
+											"      }",
+											"      return errorString;",
+											"    });",
+											"",
+											"    var schemaCheck = tv4.validateMultiple(respSchema, expectSchema, true, true);",
+											"    //console.log(\"schemaCheck properties: \" + Object.getOwnPropertyNames(schemaCheck));",
+											"    ",
+											"    // set and display tests schema compare results",
+											"    // pass when have valid schema with no errors and not missing references",
+											"    var testString = InfoString + \": errors \" + schemaCheck.errors.length  + \" missing \" + schemaCheck.missing.length;",
+											"    var testCompare = schemaCheck.valid && (schemaCheck.missing.length === 0) && (schemaCheck.errors.length === 0);",
+											"    tests[testString] = testCompare;  ",
+											"    ",
+											"    // test failure for each schema error ",
+											"    schemaCheck.errors.forEach (function(error) {",
+											"      //console.log(\"error properties: \" + Object.getOwnPropertyNames(error));",
+											"      var eCode = \" code=\" + error.code;",
+											"      var eMsg  = \" message=\" + error.message;",
+											"      var eParams = \" params=\"+ JSON.stringify(error.params);",
+											"      var eData = \" dataPath=\" + error.dataPath;",
+											"      var eSchema = \" schemaPath=\" + error.schemaPath;",
+											"      var eSubs = \" subErrors=\" + error.subErrors;",
+											"      var errorString = \"error:\" + eCode + eMsg + eParams + eData;",
+											"      // console.log(errorString);     ",
+											"      tests[InfoString + \": \" + errorString] = false;",
+											"    });",
+											"    ",
+											"    // test failure for each schema missing reference ",
+											"    schemaCheck.missing.forEach (function(missing) {",
+											"      tests[InfoString + \": missing $ref \" + missing + \"#/definitions/\"] = false;",
+											"    });",
+											"    ",
+											"    if (!testCompare) console.log(schemaCheck);",
+											"  };",
+											"  ",
+											"  // ...additional helpers",
+											"    return helpers;",
+											"} + '; loadHelpers();');",
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "1fc14544-44ee-40d7-9d01-507bf437a236",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"",
+											"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = request.name + \" \";",
+											"console.log(\"Request: \"+reqString+\" - Test Script, response msec \" + responseTime);",
+											"helpers.checkStatusCode(rspCode, reqString + \": \");",
+											"",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== rspCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "HEAD",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{e_host_name_web}}.dishanywhere.com",
+									"host": [
+										"{{e_host_name_web}}",
+										"dishanywhere",
+										"com"
+									]
+								},
+								"description": "Collect, Folder, Sub-folder pre/post script order\nand Define general helper functions"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "39997140-2b95-4c24-8a11-64bda8a08763",
+								"type": "text/javascript",
+								"exec": [
+									"var reqString = \"Sub-Folder: DANY sub status\";",
+									"console.log(reqString+\" - Pre Request Script\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "8252cc7c-6e8a-43f2-9349-04c10b9127c6",
+								"type": "text/javascript",
+								"exec": [
+									"var reqString = \"Sub-Folder: DANY status\";",
+									"console.log(reqString+\" - Post Recieve Script\");"
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get DANY Web base",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "562257f3-01e9-4a62-b127-7d82d7164eee",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"",
+									"// lodash v4.17.2  JavaScript support library",
+									"var _ = require('lodash');",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "dbc8cede-12a8-4efd-98b5-2a4c1dcc95f9",
+								"type": "text/javascript",
+								"exec": [
+									"// https://www.getpostman.com/docs/postman/scripts/postman_sandbox_api_reference",
+									"",
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"",
+									"// lodash v4.17.2  JavaScript support library",
+									"var _ = require('lodash');",
+									"",
+									"// BDD via npm chai (v3.5.0) package ",
+									"var chai = require('chai'),",
+									"    expect = chai.expect,",
+									"    should = chai.should();",
+									"",
+									"",
+									"// JSON Schema validator via npm tv4 v1.2.7",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var badCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"",
+									"var reqString = \"Get DishAnyWhere Web base\"; ",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"// helpers.checkStatusCode(badCode, reqString + \": \");",
+									"",
+									"// set next Requeat to be null, in case CHAI assert failure without catch",
+									"postman.setNextRequest(null);",
+									"tests[\"Chai to.equal responseCode\"] = true;",
+									"expect(responseCode.code).to.equal(okCode);",
+									"//expect(responseCode.code).to.equal(badCode);",
+									"try {",
+									"    expect(responseCode.code).to.equal(badCode);",
+									"} catch (e) {",
+									"    errorString = \"chai expect: \" + e;",
+									"    tests[errorString] = true; // false or true",
+									"}",
+									"",
+									"tests[\"Chai should.equal responseCode\"] = true;",
+									"responseCode.code.should.equal(okCode);",
+									"//responseCode.code.should.equal(badCode);",
+									"try {",
+									"    responseCode.code.should.equal(badCode);",
+									"} catch (e) {",
+									"    errorString = \"chai should: \" + e;",
+									"    tests[errorString] = true; // false or true",
+									"}",
+									"",
+									"// Since no CHAI assert failure without catch, Set next Request to be next ",
+									"postman.setNextRequest(\"Get DANY Web status\");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"function displayHTMLinfo(dispString, objHTML){",
+									"   var objString = \"\" + objHTML;",
+									"   tests[dispString+ \" HTML.length: \"   + objString.length + \", HTML: \" + objHTML] = true;",
+									"   tests[dispString+ \".html().length: \" + objHTML.html().length + \", html(): \" + objHTML.html() ] = true;",
+									"   tests[dispString+ \".text().length: \" + objHTML.text().length + \", text(): \" + objHTML.text() ] = true; ",
+									"}",
+									"",
+									"// example via npm cheerio v0.22.0 for HTML response ",
+									"var cheerio = require('cheerio'),",
+									"    $ = cheerio.load(responseBody); // parse response as HTML object",
+									"var headHTML = cheerio.load($('head').html()); // parse <head> tag value into HTML object",
+									"",
+									"tests[\"cheerio <head> has \" + headHTML('meta').length + \" <meta> tags\"] = true;",
+									"headHTML('meta').each(function (i, elem) {",
+									"    attrContent = headHTML(this).attr('content');",
+									"    attrName = headHTML(this).attr('name');",
+									"    if (attrContent !== undefined && attrContent !== null && attrContent !== \"\" &&",
+									"       attrName !== undefined && attrName !== null && attrName !== \"\") {",
+									"        tests[\"<meta>[\"+i+\"] \" + attrName+\": \"+attrContent]= true;",
+									"    }",
+									"});",
+									"var metaDanyHTML = headHTML('meta[name=dany]');",
+									"var webDataBranch = metaDanyHTML.attr('data-branch');",
+									"var webDataHash = metaDanyHTML.attr('data-hash');",
+									"var webTitle = metaDanyHTML.attr('content');",
+									"displayHTMLinfo(\"<head><meta>[name=\\\"dany\\\"]\",metaDanyHTML);",
+									"helpers.CompareSame(\"Web Deploy Branch: \", webDataBranch,environment.e_branch_web);",
+									"tests[\"Web Deploy Branch: \" + webDataBranch + \", Hash: \" + webDataHash ] = true;",
+									"postman.setGlobalVariable(\"g_Web_Branch\", webDataBranch);",
+									"postman.setGlobalVariable(\"g_Web_Hash\", webDataHash);",
+									"",
+									"var headTitleHTML = headHTML('title');",
+									"displayHTMLinfo(\"<head><title>\",headTitleHTML);",
+									"helpers.CompareSame(\"<head><title>.text():\",headTitleHTML.text(),webTitle);",
+									"",
+									"var bodyHTML = cheerio.load($('body').html()); // parese <head> tag value into HTML object",
+									"var bodyMainHTML = bodyHTML('#mainContainer');",
+									"displayHTMLinfo(\"<body>[id=\\\"mainContainer\\\"]\",bodyMainHTML);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{e_host_name_web}}.dishanywhere.com",
+							"host": [
+								"{{e_host_name_web}}",
+								"dishanywhere",
+								"com"
+							]
+						},
+						"description": "Set variables: Web Branch/Hash;\nPostman buit-in API (chai, cheerio)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Web status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a74541d2-8f16-410d-8ad6-000e93f00252",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "389eb628-6abe-4ec4-9a24-3539d446fe81",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DishAnyWhere Web Health\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"",
+									"// check that web deploy branch matches evironment branch",
+									"var webBranch = globals.g_Web_Branch;",
+									"var webHash = globals.g_Web_Hash;",
+									"helpers.CompareSame(reqString + \" branch:\",respBody.git.branch,webBranch);",
+									"helpers.CompareSame(reqString + \" hash:\",respBody.git.hash,webHash);",
+									"",
+									"// check that web session has fields consistent similar api fields",
+									"var session = respBody.config.session;",
+									"var sesString = reqString + \" session\";",
+									"",
+									"var dishAppName = \"DISHANYWHERE\";",
+									"helpers.CompareSame(sesString + \".dish_app_name:\",session.dish_app_name,dishAppName);",
+									"",
+									"var danyBaseURL = \"http://\" + environment.e_host_name_web + \".dishanywhere.com\";",
+									"helpers.CompareSame(sesString + \".dany_base_url:\",session.dany_base_url,danyBaseURL);",
+									"",
+									"// set global API http url",
+									"var apiHttpURL = session.radish_url;",
+									"tests[sesString + \".radish_url: \" + apiHttpURL ] = true; // display info - not a real test",
+									"var apiHostURL = apiHttpURL.split('//')[1].split('/')[0];",
+									"tests[sesString + \" API HOST URL: \" + apiHostURL ] = true; // display info - not a real test",
+									"postman.setGlobalVariable(\"g_API_HOST_URL\", apiHostURL);",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{e_host_name_web}}.dishanywhere.com/health/config_check",
+							"host": [
+								"{{e_host_name_web}}",
+								"dishanywhere",
+								"com"
+							],
+							"path": [
+								"health",
+								"config_check"
+							]
+						},
+						"description": "get web status health;\ncheck values: Web Branch/Hash;\nset variables: API URL"
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY API base",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9676b9fa-5f64-499e-a049-8488676799b5",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"",
+									"// lodash v4.17.2",
+									"var _ = require('lodash');",
+									"",
+									"postman.setGlobalVariable(\"g_ok_color\", \"green\");",
+									"postman.setGlobalVariable(\"g_bad_color\", \"red\");",
+									"",
+									"var schemaDANYbaseAPI = {",
+									"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"  \"title\" : \"DANY Base API\",",
+									"  \"description\": \"Base API DishAnyWhere\",",
+									"  \"definitions\": { },",
+									"  \"id\": \"http://DishAnyWhere.com/schema/base\",",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"memcache\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/memcache\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"sge\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/sge\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"ghopper\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/ghopper\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"whats_hot\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/whats_hot\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"elastic_search\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/elastic_search\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"csa\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/csa\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"zeus_login\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/zeus_login\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"zeus_other\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/zeus_other\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"gamefinder\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/gamefinder\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    },",
+									"    \"digitalsmiths\": {",
+									"      \"id\": \"http://DishAnyWhere.com/schema/base/digitalsmiths\",",
+									"      \"type\": \"string\", \"format\": \"green-red\"",
+									"    }",
+									"  },",
+									"  \"additionalProperties\": false,",
+									"  \"required\": [",
+									"    \"memcache\",",
+									"    \"sge\",",
+									"    \"ghopper\",",
+									"    \"whats_hot\",",
+									"    \"elastic_search\",",
+									"    \"csa\",",
+									"    \"zeus_login\",",
+									"    \"gamefinder\",",
+									"    \"digitalsmiths\"",
+									"  ]",
+									"};",
+									"postman.setGlobalVariable(\"g_schemaDANYbaseAPI\", JSON.stringify(schemaDANYbaseAPI));",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYbaseAPI);",
+									"tv4.addSchema(schemaResponse);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc5c3cd4-b58c-463b-8b43-b7aab59f78db",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"",
+									"// lodash v4.17.2",
+									"var _ = require('lodash');",
+									"",
+									"var reqString = \"Get DishAnyWhere API Base\";",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYbaseAPI);",
+									"var expectedSchema = tv4.getSchema(schemaResponse.id);",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"helpers.checkRespSchema(respBody, expectedSchema, reqString + \" schema check\", false);",
+									"",
+									"var ok_color = globals.g_ok_color;",
+									"_.forEach(respBody, function(value, key) {",
+									"    helpers.CompareSame(reqString + \" '\"+ key +\"' status\",value,ok_color);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							]
+						},
+						"description": "get API URL; Check third party status;\nPostman buit-in API (lodash, tv4);"
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY API status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8a440aaa-b798-42cb-a320-21a704c0cc39",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f434ee8e-e656-45ee-8eed-b7083617d490",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DishAnyWhere API Health\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var apiBranch = environment.e_branch_api;",
+									"helpers.CompareSame(reqString + \" branch:\",respBody.git.branch,apiBranch);",
+									"tests[reqString + \" hash: '\" + respBody.git.hash] = true; // display info - not a real test"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/health/config_check",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"health",
+								"config_check"
+							]
+						},
+						"description": "get API URL branch/Hash;\ncheck values: API Branch;"
+					},
+					"response": []
+				},
+				{
+					"name": "End DANY status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4f14a29a-0a35-4c46-aa56-2e6a784d2655",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "39025d82-7ac9-4cae-8ed5-a4fe101ead69",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DishAnyWhere API Health\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(\"Set Program helpers\");",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(\"Set Program helpers\");",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(\"Set Program helpers\");",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "HEAD",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{e_host_name_web}}.dishanywhere.com",
+							"host": [
+								"{{e_host_name_web}}",
+								"dishanywhere",
+								"com"
+							]
+						},
+						"description": "Done Web/API status;\nSet next test API folder"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ef130d59-18e7-4dd7-aabb-2ac72f310dcc",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"var reqString = \"Folder: before \" + request.name;",
+							"",
+							"postman.setGlobalVariable(\"g_DateFormat\", \"YYYY-MM-DD HH:mm:ss.SSS Z\");",
+							"postman.setGlobalVariable(\"g_PreReqDateTime\", moment().format(globals.g_DateFormat));",
+							"",
+							"console.log(reqString+\" - Pre Request Script at \" + globals.g_PreReqDateTime);"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3c886be-9860-4ea0-ab4f-27a61642649a",
+						"type": "text/javascript",
+						"exec": [
+							"var moment = require('moment');",
+							"var reqString = \"Folder: \" + request.name + \" after \";",
+							"",
+							"var postRecDateTime = moment();",
+							"var preReqDateTime = moment(globals.g_PreReqDateTime,globals.g_DateFormat);",
+							"",
+							"console.log(reqString+\" - Post Recieve Script at \" + postRecDateTime.format(globals.g_DateFormat));",
+							"console.log(reqString+\" - milliseconds since PreReq \" + postRecDateTime.diff(preReqDateTime));"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "DANY Programs",
+			"item": [
+				{
+					"name": "Set Program helpers",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "85561132-eb11-4711-8423-79cfe35a388c",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"",
+									"// DANY Programs are TV Shows and Movies",
+									"",
+									"// DANY Prog base API and version",
+									"postman.setGlobalVariable(\"g_dany_ver_prog\", \"v20/dol\"); // values \"v20/dol\"",
+									"postman.setGlobalVariable(\"g_dany_api_prog\", \"search/airings/count\");",
+									"",
+									"// define helper functions ",
+									"postman.setGlobalVariable(\"loadProgHelpers\", function loadProgHelpers() {",
+									"  let progHelpers = {};",
+									"  ",
+									"  progHelpers.setFilterList = function storeFilterList( ",
+									"    // converts a filter list of pair into result list pairs (Display, Search)",
+									"    // returns the convert list, ",
+									"    // stores convert list in a global parameter",
+									"    // stores random sample convert list in another global paramter",
+									"    filterTypeStg,    // disolay string for the specific filter",
+									"    jsonFilterList,   // original Json Filter List pairs ",
+									"    jsonDspStg,       // original pair tag to become the Display tag",
+									"    jsonSrcStg,       // original pair tag to become the Search tag",
+									"    gVar_FilterList,  // global variable to store the result filter list (Display, Search)",
+									"    gVar_FliterSample // global variable to store random sample for result filter list",
+									"   ) {",
+									"    var filterList = [];",
+									"    helpers.CompareEqual(\"initial \" + filterTypeStg+\" filter array is empty\",filterList.length,0);",
+									"  ",
+									"    for (var jsonfilterObj of jsonFilterList) {",
+									"      filterObj = { \"AppDisplay\": jsonfilterObj[jsonDspStg],",
+									"                  \"ApiSearch\": jsonfilterObj[jsonSrcStg]",
+									"      };",
+									"      //tests[JSON.stringify(filterObj)] = true;  // display info - not a real test",
+									"      filterList.push(filterObj);",
+									"    }",
+									"    helpers.CompareGreater(\"loaded \" + filterTypeStg + \" filter array > 0\",filterList.length,0);",
+									"  ",
+									"    // store global for the filter List",
+									"    postman.setGlobalVariable(gVar_FilterList, JSON.stringify(filterList));",
+									"  ",
+									"    // set and store random re-order of filter List",
+									"    var filterSample = _.shuffle(filterList);",
+									"    postman.setGlobalVariable(gVar_FliterSample, JSON.stringify(filterSample));",
+									"    return filterList;",
+									"  };",
+									"  ",
+									"  progHelpers.cmpFilterListSample = function outFilterListSample( ",
+									"    // output a filter list pairs (Display, Search) ",
+									"    // and its random sample via their index",
+									"    // return false if different length, otherwise true",
+									"    filterTypeStg,    // disolay string for the specific filter",
+									"    filterList,   // the filter list pairs (Display, Search) ",
+									"    filterSample //  the random sample version",
+									"  ) {",
+									"    var orgSortDsp, orgSortSrc, orgSortStg;",
+									"    var smpSortDsp, smpSortSrc, smpSortStg;",
+									"    var outOrgSmpStg;",
+									"  ",
+									"    if (filterList.length !== filterSample.length) {",
+									"      helpers.CompareSame(filterTypeStg + \" Filter List and its Radmom Sample have same length\",",
+									"        filterList.length,filterSample.length); ",
+									"      return false;",
+									"    }",
+									"    for (var index in filterList) {",
+									"      orgSortDsp = filterList[index].AppDisplay;",
+									"      orgSortSrc = filterList[index].ApiSearch;",
+									"      orgSortStg = \"filter[\"+index+\"] AppDisplay: '\"+orgSortDsp+ \"' ApiSearch: '\"+ orgSortSrc+\"'\";",
+									"  ",
+									"      smpSortDsp = filterSample[index].AppDisplay;",
+									"      smpSortSrc = filterSample[index].ApiSearch;",
+									"     smpSortStg = \"sample[\"+index+\"] AppDisplay: '\"+smpSortDsp+ \"' ApiSearch: '\"+ smpSortSrc+\"'\";",
+									"  ",
+									"      if (orgSortDsp == smpSortDsp) {",
+									"        outOrgSmpStg =  filterTypeStg + \" ApiSearch filter[\"+index+\"] == sample[\"+index+\"]\";",
+									"        helpers.CompareSame(outOrgSmpStg + \"; \" + orgSortStg + \"; \" + smpSortStg + \"; \",orgSortSrc,smpSortSrc);",
+									"      } else {",
+									"        outOrgSmpStg = filterTypeStg + \" ApiSearch filter[\"+index+\"] != sample[\"+index+\"]\"; ",
+									"        helpers.CompareDiff(outOrgSmpStg + \"; \" + orgSortStg + \"; \" + smpSortStg + \"; \",orgSortSrc,smpSortSrc);",
+									"      }",
+									"    }",
+									"  };",
+									"",
+									"  progHelpers.setNextIndexAPI = function getNextIndexAPI (",
+									"    g_currentIndex, // global current Index variable",
+									"    g_filterList,   // global filter List variable",
+									"    nextAPIRequest, // the next API Request to send, when next index > 0",
+									"    incIndex = 1,   // about to increase index count",
+									"    displayInfo = false // display next Index and API Request, when true",
+									"  ) {",
+									"    var i = Number(globals[g_currentIndex]);",
+									"    var fSize = (JSON.parse(globals[g_filterList])).length;",
+									"    if (incIndex < 1) { incIndex = 1 }  // increase index at least 1",
+									"    i = (i+incIndex < fSize)? i+incIndex: 0;",
+									"",
+									"    postman.setGlobalVariable(g_currentIndex, i);",
+									"    if (i> 0) {",
+									"      postman.setNextRequest(nextAPIRequest);",
+									"      if (displayInfo === true) { tests[\"next array index is: \" + i + \"; API request: '\" + nextAPIRequest + \"'\"] = true; }",
+									"    } else {",
+									"      if (displayInfo === true) { tests[\"next array index is: \" + i] = true; }",
+									"    }",
+									"  };",
+									"  ",
+									" progHelpers.setNextProgAPIReq = function getNextProgAPIReq(",
+									"     gIndex,    // global current Index variable",
+									"     gList,     // global filter All-List variable",
+									"     gSample,   // global filter Sample-List variable",
+									"     sInc,      // Sample-list index increase to limit sample API requests",
+									"     APIreqName // the next API Request to send",
+									"   ) {",
+									"   if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									"     // stop sample-list API next requests when next index < ( list.size / sampleGroup)",
+									"     var fSize = JSON.parse(globals[gSample]).length;",
+									"     var i = Number(globals[gIndex]);",
+									"     progHelpers.setNextIndexAPI(gIndex,gSample,APIreqName,sInc);",
+									"    } else {",
+									"      progHelpers.setNextIndexAPI(gIndex,gList,APIreqName);",
+									"    }",
+									"  };",
+									"",
+									"  progHelpers.setProgObj = function getProgObj (",
+									"    pKind,   // kind of program show or movie",
+									"    progRsp, // response Json prog object ",
+									"    count    // count of response in the response list",
+									"    // set and returns the prog Obj based on API response Json prog object ",
+									"  ) {",
+									"    var progObj = {}; ",
+									"    var strg = pKind +\"[\"+count+\"]\";",
+									"    progObj.index = count;",
+									"    progObj.desc = progRsp.description;",
+									"    progObj.name = progRsp.name;",
+									"    progObj.search = progRsp.slug;",
+									"    progObj.type =progRsp._type;",
+									"    progObj.kind =progRsp.kind;",
+									"  ",
+									"    progObj.rating = progRsp.rating; ",
+									"    // progRsp. rating is array of values ",
+									"    // progRsp.ratings is arrary of tag-value pairs",
+									"    progObj.rateList = [];",
+									"    if (progRsp.ratings !== undefined) {",
+									"      for (var rObj of progRsp.ratings) {",
+									"        progObj.rateList.push(rObj.rating);",
+									"       } ",
+									"    } else { ",
+									"      tests[strg + \" name=\"+progObj.name + \"; no rating list\"]=true; // display info - not a real test",
+									"    }",
+									"  ",
+									"    progObj.genreList = [];",
+									"    if (progRsp.genres !== undefined) {",
+									"      for (var gi in progRsp.genres) {",
+									"        progObj.genreList.push(progRsp.genres[gi]);",
+									"      } ",
+									"    } else { ",
+									"      tests[strg + \" name=\"+progObj.name + \"; no genres list\"]=true; // display info - not a real test",
+									"    }",
+									" ",
+									"    progObj.networkList = [];",
+									"    if (progRsp.networks !== undefined) {",
+									"      for (var nObj of progRsp.networks) {",
+									"        progObj.networkList.push(nObj.name);",
+									"     } ",
+									"    } else { ",
+									"      tests[strg + \" name=\"+progObj.name + \"; no network list\"]=true; // display info - not a real test",
+									"    }",
+									"    return progObj;",
+									"  };",
+									"  ",
+									"  progHelpers.dispProgObj = function dispProgObj ( ",
+									"    pKind,    // kind of program show or movies",
+									"    preStrg,  // pre string before display Information",
+									"    progObj   // Internal ProgObj to display",
+									"  ) {",
+									"    strg = preStrg + \"; index: \" +  progObj.index + ",
+									"      \"; type: \" + progObj.type + ",
+									"      \"; kind: \" + progObj.kind + ",
+									"      \"; name: \" + progObj.name + ",
+									"      \"; desc.length: \" + progObj.desc.length +",
+									"      \"; search: \" + progObj.search +",
+									"      \"; rating: \" + progObj.rating +",
+									"      \"; rList: \" + progObj.rateList +",
+									"      \"; gList: \" + progObj.genreList +",
+									"      \"; nList: \" + progObj.networkList;",
+									"    tests[strg]=true; // display info - not a real test",
+									"  };",
+									"  ",
+									"  progHelpers.testBasicProgObj = function evalProgObj (",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    progObj, // prog object to evaluate (ie test)",
+									"    minDescSize=1, // minimum description size",
+									"    minGenreSize=0 // minimum genreList size",
+									"  ) {",
+									"    var strg = preStrg + \"; \"+pKind+\"[\"+progObj.index+\"] name=\"+progObj.name;",
+									"    helpers.CompareGreater(strg + \"; name.length\", progObj.name.length, 0);",
+									"    helpers.CompareSame(strg + \"; type\", progObj.type.toLowerCase(), \"programs\");",
+									"    helpers.CompareSame(strg + \"; kind\", progObj.kind.toLowerCase(), pKind);",
+									"    helpers.CompareGreatEq(strg + \"; desc.length\", progObj.desc.length, minDescSize);",
+									"    if ((progObj.rating !== undefined) && (progObj.rating !== null)) {",
+									"      // progObj.rateList is array of rate values",
+									"      // progObj.rating   is array of rate values",
+									"      // helpers.CompareIncludes(strg + \"; rateList\",progObj.rateList,progObj.rating);",
+									"     helpers.CompareSame(strg+\"; rating \"+ progObj.rating + \" vs rateList \" + progObj.rateList + \":\",",
+									"           _.isEqual(progObj.rating,progObj.rateList),",
+									"           true);",
+									"    } else {",
+									"       helpers.CompareEqual(strg + \"; rateList item count\",progObj.rateList.length,0);",
+									"    }",
+									"    helpers.CompareGreatEq(strg + \"; genreList item count\",progObj.genreList.length, minGenreSize);",
+									"    helpers.CompareGreater(strg + \"; networkList item count\",progObj.networkList.length, 0);",
+									"  };",
+									"  ",
+									"  ",
+									"  progHelpers.testProgSortOrder = function checkProgSortOrder(",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    srchVal, // Sort search value",
+									"    progObj1, // current response object",
+									"    progObj0  // before current object",
+									"  ) {",
+									"    var i=progObj1.index;",
+									"    var j=progObj0.index;",
+									"    switch(srchVal) {",
+									"       case \"date\":",
+									"      // API movie response missing date compare information",
+									"      break;",
+									"      case \"most_popular\":",
+									"      // API show and movie response missing most_popular compare information",
+									"      break;",
+									"      case \"name\": // API show and movie",
+									"        helpers.CompareGreater(preStrg + \"; \"+pKind+\"[\"+i+\"].name > \"+pKind+\"[\"+j+\"].name\",progObj1.name,progObj0.name);",
+									"        if (progObj1.name <= progObj0.name) {",
+									"          helpers.CompareGreater(preStrg + \"; \"+pKind+\"[\"+i+\"].search > \"+pKind+\"[\"+j+\"].search\",progObj1.search,progObj0.search);",
+									"        }",
+									"      break;",
+									"      case \"rating\":",
+									"     // API movie response missing rating compare information",
+									"     // show critics_rating or movie critics_rating",
+									"     //  \"critics_rating\": \"4.0\"   \"critics_rating\": null",
+									"     break;",
+									"     case \"recent\":",
+									"      // API show response missing recent compare information",
+									"      break;",
+									"      case \"tomatometer\":",
+									"      // API movie response missing tomatometer compare information",
+									"      // movie tomatometer.critic_score as number",
+									"      /* \"tomatometer\": {",
+									"            \"critic_review_count\": 15,",
+									"            \"fan_score\": 88,",
+									"            \"critic_score\": 100,",
+									"            \"fan_review_count\": 1338",
+									"      },  */",
+									"      //  show \"tomatometer\": null",
+									"      break;",
+									"      case \"whats_hot\":",
+									"      // API show response missing whats_hot compare information",
+									"      break;",
+									"      default:",
+									"        helpers.CompareEqual(preStrg + \": known \"+pKind+\" sort='\"+srchVal+\"'\",true,false);",
+									"      break;",
+									"    }",
+									"  };",
+									"  ",
+									"   progHelpers.testProgHaveGenre = function checkProgHasGenre(",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    genreDsp,// Genre Display String",
+									"    genreVal,// Gener search value",
+									"    progObj  // Program object",
+									"  ) {",
+									"    var strg = preStrg + \"; \"+pKind+\"[\"+progObj.index+\"] name=\"+progObj.name;",
+									"    if (genreVal == \"all\") {",
+									"      helpers.CompareGreater(strg+\"; genreList size\",progObj.genreList.length,0);  ",
+									"    } else {",
+									"      var hasGenre = false;",
+									"      for (var genre of progObj.genreList) {",
+									"        if ((genre.toLowerCase() == genreDsp.toLowerCase()) || (genre.toLowerCase() == genreVal.toLowerCase())) {",
+									"          hasGenre = true;",
+									"          break;",
+									"        }",
+									"      }",
+									"      helpers.CompareEqual(strg+\"; genreList has \"+ genreDsp,hasGenre,true);",
+									"    }",
+									"  };",
+									"",
+									"  progHelpers.testProgHaveRating = function checkProgHasRating(",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    rateDsp, // Rating display value",
+									"    rateVal, // Rating search value ",
+									"    progObj  // program object ",
+									"  ) {",
+									"    var strg = preStrg + \"; \"+pKind+\"[\"+progObj.index+\"] name=\"+progObj.name;",
+									"    if (rateVal == \"all\") {",
+									"      helpers.CompareGreater(strg+\"; rateList size\",progObj.rateList.length,0);  ",
+									"    } else if (progObj.rating == rateDsp) {",
+									"      helpers.CompareSame(strg+\"; rating\",progObj.rating,rateDsp);",
+									"    } else {",
+									"      var hasRating = false;",
+									"      for (var rate of progObj.rateList) {",
+									"       if ((rate.toLowerCase() == rateDsp.toLowerCase()) || (rate.toLowerCase() == rateVal.toLowerCase())) {",
+									"         hasRating = true;",
+									"         break;",
+									"       }",
+									"      }",
+									"      helpers.CompareSame(strg+\"; rateList has \"+ rateDsp,hasRating,true);",
+									"    }",
+									"  };",
+									"",
+									"  progHelpers.testProgHaveLetter = function checkProgHasLetter(",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    letterDsp, // letter display value",
+									"    letterVal, // letter search value",
+									"    progObj    // program object",
+									"  ) {",
+									"    var strg = preStrg + \"; \"+pKind+\"[\"+progObj.index+\"] name=\"+progObj.name;",
+									"    var letterlist;",
+									"    if (letterVal == \"123\") {",
+									"      // check name[0] is a number",
+									"      letterlist = ['0','1','2','3','4','5','6','7','8','9'];",
+									"    } else {",
+									"      // check name[0] is search letter via ignore case",
+									"      letterlist = [letterVal.toLowerCase(),letterVal.toUpperCase()];",
+									"    }",
+									"    helpers.CompareInList(strg+\"; name[0]\",letterlist,progObj.name[0]);",
+									"    helpers.CompareInList(strg+\"; search[0]\",letterlist,progObj.search[0]);",
+									"  };",
+									"  ",
+									"  progHelpers.testProgTotalListCounts = function evalProgTotalCount (",
+									"    dspString,   // display string",
+									"    totalCount,  // respBody.count (total amount)",
+									"    totalExpect, // expected total less than value ",
+									"    countList,   // prog list length ",
+									"    expectZero = false // minimum description size",
+									"  ) {",
+									"    if (expectZero === false) {",
+									"        helpers.CompareGreater(dspString + \": Total\",totalCount,totalExpect);",
+									"        if (totCount > 0) {",
+									"            helpers.CompareGreater(reqString + \": Count\",countList,0);",
+									"        } else {",
+									"            helpers.CompareEqual(reqString + \": Count\",countList,0);",
+									"        }",
+									"    } else {",
+									"        helpers.CompareEqual(reqString + \": Total\",totalCount,0);",
+									"        helpers.CompareEqual(reqString + \": Count\",countList,0);",
+									"    }",
+									"    console.log(dspString + \": Total=\"+totalCount);",
+									"  };",
+									"  ",
+									"  // ...additional helpers",
+									"  return progHelpers;",
+									"} + '; loadProgHelpers();');"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "383ef8f0-7a45-4d64-bd13-98d2a588cc5b",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = \"Set Program helpers\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(\"Start DANY Movies\");",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(\"Start DANY TV Shows\");",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(\"Start DANY TV Shows\");",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_prog}}/{{g_dany_api_prog}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_prog}}",
+								"{{g_dany_api_prog}}.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DANY TV Shows",
+			"item": [
+				{
+					"name": "Start DANY TV Shows",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5bbe17c2-d3e8-41b2-8193-8714daa79b64",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"// DANY Show base API and version",
+									"postman.setGlobalVariable(\"g_dany_ver_filter\", \"v20/dol\"); // values \"v20/dol\"",
+									"postman.setGlobalVariable(\"g_dany_ver_shows\", \"v20/dol\");  // values \"v20/dol\"  \"v21/dol\"",
+									"postman.setGlobalVariable(\"g_dany_api_shows\", \"shows\");",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "d0bbce9a-2213-45c0-ae63-d085b1189b4c",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = \"Start DANY TV Shows\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows sort filters",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "02ef95e2-9db6-43dc-a0c4-a1a9c4bc6a29",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"// init DANY Show Sort Filter list to empty array",
+									"var showSortFilterList  = [];",
+									"postman.setGlobalVariable(\"g_showSortFilterList\", JSON.stringify(showSortFilterList));",
+									"",
+									"// define schema DANY Shows Short filters",
+									"var schemaDANYshowsSortFilters = {",
+									"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"  \"title\" : \"DANY Show Sort Filters\",",
+									"  \"description\": \"DANY Show Sort Filters\",",
+									"  \"definitions\": { },",
+									"  \"id\": \"http://DishAnyWhere.com/schema/Shows/Sorts\",",
+									"  \"type\": \"array\",",
+									"  \"uniqueItems\": true,",
+									"  \"minItems\": 4,",
+									"  \"maxItems\": 4,",
+									"  \"items\": {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"      \"name\": {",
+									"        \"id\": \"http://DishAnyWhere.com/schema/Shows/Sorts/items/name\",",
+									"        \"type\": \"string\", \"minLength\": 5, \"maxLength\": 14",
+									"      },",
+									"      \"slug\": {",
+									"        \"id\": \"http://DishAnyWhere.com/schema/Shows/Sorts/items/slug\",",
+									"        \"type\": \"string\", \"minLength\": 4, \"maxLength\": 12",
+									"      },",
+									"    },",
+									"    \"additionalProperties\": false,",
+									"    \"required\": [",
+									"        \"name\",",
+									"        \"slug\",",
+									"      ]",
+									"  }",
+									"};",
+									"postman.setGlobalVariable(\"g_schemaDANYshowSortFilter\", JSON.stringify(schemaDANYshowsSortFilters));",
+									"",
+									"// add schema DANY Shows Short filters to schema validation list",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYshowSortFilter);",
+									"tv4.addSchema(schemaResponse);",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e12d185c-eab6-47f9-8f69-375121cafcf5",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows sorts\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// get global for Shows Sort Filter schema",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYshowSortFilter);",
+									"var expectedSchema = tv4.getSchema(schemaResponse.id);",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"helpers.checkRespSchema(respBody, expectedSchema, reqString + \" schema check\", false);",
+									"",
+									"// store Show Sort filters via response; with sample array and initial index",
+									"showFilterList = progHelpers.setFilterList(\"Show Sort\", respBody, \"name\", \"slug\", ",
+									"    \"g_showSortFilterList\",\"g_showSortFilterSample\" );",
+									"postman.setGlobalVariable(\"g_showSortFilterIndex\", 0);",
+									"",
+									"// output filter List vs sample list",
+									"var sortFilterList = JSON.parse(globals.g_showSortFilterList);",
+									"var sortFilterSample = JSON.parse(globals.g_showSortFilterSample);",
+									"progHelpers.cmpFilterListSample(\"Show Sort\", sortFilterList,sortFilterSample);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}/sorts.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}",
+								"sorts.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows sort spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "02a166c9-5734-4f04-b2e4-ed8a252dbb41",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_showSortFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_showSortFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_showSortFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_showSortVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_showSortDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7fe98a41-05eb-4631-8218-550018d90714",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY TV Shows sort spec\";",
+									"var srchVal = globals.g_showSortVal;",
+									"var srchDsp = globals.g_showSortDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows sort '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"sort=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_showSortFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample sorts",
+									"progHelpers.setNextProgAPIReq(\"g_showSortFilterIndex\",\"g_showSortFilterList\",\"g_showSortFilterSample\",5,APIrequestName); ",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// Eval response",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var showList = respBody.shows;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,2300,showList.length);",
+									"",
+									"var sType = \"show\";",
+									"var showInfoList = [];",
+									"var showInfoObj;",
+									"var showRsp, cnt=0, strg;",
+									"for (var showObj of showList) {",
+									"    showRsp = showObj.show;",
+									"    showInfoObj = progHelpers.setProgObj(sType,showRsp,cnt);",
+									"    showInfoList.push(showInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in showInfoList) {",
+									"    progHelpers.dispProgObj(sType,infoPreStrg,showInfoList[i]);",
+									"    if (i>0) {",
+									"      progHelpers.testProgSortOrder(sType,infoPreStrg,srchVal,showInfoList[i],showInfoList[i-1]);",
+									"    } ",
+									"    progHelpers.testBasicProgObj(sType,infoPreStrg,showInfoList[i],5,1); // desc.length >= 5; genreList.length >= 1",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?sort={{g_showSortVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_shows}}.json"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "{{g_showSortVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows filters all",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ea655c33-e160-48a1-b80c-4a6b5efbe1c2",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"// init DANY Show Genere Filter list to empty array",
+									"var showGenreFilterList  = [];",
+									"postman.setGlobalVariable(\"g_showGenreFilterList\", JSON.stringify(showGenreFilterList));",
+									"",
+									"",
+									"// init DANY Show Rating Filter list to empty array",
+									"var showRatingFilterList  = [];",
+									"postman.setGlobalVariable(\"g_showRatingFilterList\", JSON.stringify(showRatingFilterList));",
+									"",
+									"// init DANY Show Letter Filter list to empty array",
+									"var showLetterFilterList  = [];",
+									"postman.setGlobalVariable(\"g_showLetterFilterList\", JSON.stringify(showLetterFilterList));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e4bb8254-92e2-4820-a210-0bedc2a6b02a",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows filters\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"",
+									"// store Genre global fliter list pairs (Display, Search) with sample array and initial index",
+									"showFilterList = progHelpers.setFilterList(\"Show Genre\", respBody.genres, \"name\", \"slug\",",
+									"    \"g_showGenreFilterList\",\"g_showGenreFilterSample\" );",
+									"postman.setGlobalVariable(\"g_showGenreFilterIndex\", 0);",
+									"",
+									"// store Rating global fliter list pairs (Display, Search) with sample array and initial index",
+									"showFilterList = progHelpers.setFilterList(\"Show Rating\", respBody.ratings, \"name\", \"slug\",",
+									"    \"g_showRatingFilterList\",\"g_showRatingFilterSample\" );",
+									"postman.setGlobalVariable(\"g_showRatingFilterIndex\", 0);",
+									"",
+									"// store Letter global fliter list pairs (Display, Search) with sample array and initial index",
+									"showFilterList = progHelpers.setFilterList(\"Show Letter\", respBody[\"a-z\"], \"name\", \"slug\", ",
+									"    \"g_showLetterFilterList\",\"g_showLetterFilterSample\" );",
+									"postman.setGlobalVariable(\"g_showLetterFilterIndex\", 0);",
+									"",
+									"var outputG_Filters = [ ]; //  \"Genre\", \"Rating\", \"Letter\"",
+									"var filterType, gVar_filterList, gVar_filterSample, filterList, filterSample;",
+									"for (var filter of outputG_Filters) {",
+									"    filterType = \"Show \"+ filter;",
+									"    gVar_filterList = \"g_show\" + filter + \"FilterList\";",
+									"    gVar_filterSample = \"g_show\" + filter + \"FilterSample\";",
+									"    // tests[\"output \" + gVar_filterList + \" vs \" + gVar_filterSample] = true; // display info - not a real test",
+									"    progHelpers.cmpFilterListSample(filterType,JSON.parse(globals[gVar_filterList]),JSON.parse(globals[gVar_filterSample]));",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}/filters.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}",
+								"filters.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows genre spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dddd157e-1aca-4d02-acb2-df3e9640122f",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_showGenreFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_showGenreFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_showGenreFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_showGenreVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_showGenreDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "d6699abd-ccbc-43ef-9c4a-cd989fbc8efe",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY TV Shows genre spec\";",
+									"var srchVal = globals.g_showGenreVal;",
+									"var srchDsp = globals.g_showGenreDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows genre '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"genre=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_showGenreFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_showGenreFilterIndex\",\"g_showGenreFilterList\",\"g_showGenreFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var showList = respBody.shows;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);",
+									"",
+									"var sType = \"show\";",
+									"var showInfoList = [];",
+									"var showInfoObj;",
+									"var showRsp, cnt=0, strg;",
+									"for (var showObj of showList) {",
+									"    showRsp = showObj.show;",
+									"    showInfoObj = progHelpers.setProgObj(sType,showRsp,cnt);",
+									"    showInfoList.push(showInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in showInfoList) {",
+									"    progHelpers.dispProgObj(sType,infoPreStrg,showInfoList[i]);",
+									"    progHelpers.testProgHaveGenre(sType,infoPreStrg,srchDsp,srchVal,showInfoList[i]);",
+									"    progHelpers.testBasicProgObj(sType,infoPreStrg,showInfoList[i],0,1); // desc.length >= 0; genreList.length >= 1",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?genres={{g_showGenreVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_shows}}.json"
+							],
+							"query": [
+								{
+									"key": "genres",
+									"value": "{{g_showGenreVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows rating spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f8b8fe2d-22f3-4a47-832a-9c2fe007bda0",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_showRatingFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_showRatingFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_showRatingFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_showRateVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_showRateDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "eb06914d-d72f-4e48-bcf2-4e4d7cd5d9a9",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY TV Shows rating spec\";",
+									"var srchVal = globals.g_showRateVal;",
+									"var srchDsp = globals.g_showRateDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows rate '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"rating=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_showRatingFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_showRatingFilterIndex\",\"g_showRatingFilterList\",\"g_showRatingFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var showList = respBody.shows;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length,srchVal == \"all\");",
+									"",
+									"var sType = \"show\";",
+									"var showInfoList = [];",
+									"var showInfoObj;",
+									"var showRsp, cnt=0, strg;",
+									"for (var showObj of showList) {",
+									"    showRsp = showObj.show;",
+									"    showInfoObj = progHelpers.setProgObj(sType,showRsp,cnt);",
+									"    showInfoList.push(showInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in showInfoList) {",
+									"    progHelpers.dispProgObj(sType,infoPreStrg,showInfoList[i]);",
+									"    progHelpers.testProgHaveRating(sType,infoPreStrg,srchDsp,srchVal,showInfoList[i]);",
+									"    progHelpers.testBasicProgObj(sType,infoPreStrg,showInfoList[i],0,0); // desc.length >= 0; genreList.length >= 0",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?ratings={{g_showRateVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_shows}}.json"
+							],
+							"query": [
+								{
+									"key": "ratings",
+									"value": "{{g_showRateVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows letter spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "84cbff7b-3edb-4f93-83f5-74064eb048c2",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_showLetterFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_showLetterFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_showLetterFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_showLetterVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_showLetterDsp\", filterList[index].AppDisplay);",
+									"//postman.setGlobalVariable(\"g_showLetterVal\", \"123\");",
+									"//postman.setGlobalVariable(\"g_showLetterDsp\", \"#\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "dbdf0de4-a383-4935-83f7-fe69f5cdfdaa",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY TV Shows letter spec\";",
+									"var srchVal = globals.g_showLetterVal;",
+									"var srchDsp = globals.g_showLetterDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows letter '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"a-z=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_showLetterFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_showLetterFilterIndex\",\"g_showLetterFilterList\",\"g_showLetterFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var showList = respBody.shows;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);",
+									"",
+									"var sType = \"show\";",
+									"var showInfoList = [];",
+									"var showInfoObj;",
+									"var showRsp, cnt=0, strg;",
+									"for (var showObj of showList) {",
+									"    showRsp = showObj.show;",
+									"    showInfoObj = progHelpers.setProgObj(sType,showRsp,cnt);",
+									"    showInfoList.push(showInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in showInfoList) {",
+									"    progHelpers.dispProgObj(sType,infoPreStrg,showInfoList[i]);",
+									"    progHelpers.testProgHaveLetter(sType,infoPreStrg,srchDsp,srchVal,showInfoList[i]);",
+									"    progHelpers.testBasicProgObj(sType,infoPreStrg,showInfoList[i],0,0); // desc.length >= 0; genreList.length >= 0",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?a-z={{g_showLetterVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_shows}}.json"
+							],
+							"query": [
+								{
+									"key": "a-z",
+									"value": "{{g_showLetterVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End DANY TV Shows",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "eb7a483d-9f90-447a-b88f-ffb043c5a982",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "ea01029b-9331-46ab-a9ac-43bd0a581062",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = \"End DANY Movies\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(\"Start DANY Movies\");",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(\"Start DANY Movies\");",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DANY Movies",
+			"item": [
+				{
+					"name": "Start DANY Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8f919614-36e0-4ad6-a8f5-5bd98025505a",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"// DANY Movie base API and version",
+									"postman.setGlobalVariable(\"g_dany_ver_filter\", \"v20/dol\"); // values \"v20/dol\"",
+									"postman.setGlobalVariable(\"g_dany_ver_movies\", \"v20/dol\"); // values \"v20/dol\"  \"v21/dol\"",
+									"postman.setGlobalVariable(\"g_dany_api_movies\", \"movies\");",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3655a624-b7a4-482d-a60f-f8019d734dec",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = \"Start DANY Movies\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies sort filters",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f929e96b-67a4-4f70-80dd-9669c594b0d6",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"// init DANY Movie Sort Filter list to empty array",
+									"var movieSortFilterList  = [];",
+									"postman.setGlobalVariable(\"g_movieSortFilterList\", JSON.stringify(movieSortFilterList));",
+									"",
+									"// define schema DANY Movies Short filters",
+									"var schemaDANYmoviesSortFilters = {",
+									"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"  \"title\" : \"DANY Movie Sort Filters\",",
+									"  \"description\": \"DANY Movie Sort Filters\",",
+									"  \"definitions\": { },",
+									"  \"id\": \"http://DishAnyWhere.com/schema/Movies/Sorts\",",
+									"  \"type\": \"array\",",
+									"  \"uniqueItems\": true,",
+									"  \"minItems\": 5,",
+									"  \"maxItems\": 5,",
+									"  \"items\": {",
+									"    \"type\": \"object\", ",
+									"    \"properties\": {",
+									"      \"name\": {",
+									"        \"id\": \"http://DishAnyWhere.com/schema/Movies/Sorts/items/name\",",
+									"        \"type\": \"string\", \"minLength\": 5, \"maxLength\": 20",
+									"      },",
+									"      \"slug\": {",
+									"        \"id\": \"http://DishAnyWhere.com/schema/Movies/Sorts/items/slug\",",
+									"        \"type\": \"string\", \"minLength\": 4, \"maxLength\": 12",
+									"      },",
+									"    },",
+									"    \"additionalProperties\": false,",
+									"    \"required\": [",
+									"        \"name\",",
+									"        \"slug\",",
+									"      ]",
+									"  }",
+									"};",
+									"postman.setGlobalVariable(\"g_schemaDANYmovieSortFilter\", JSON.stringify(schemaDANYmoviesSortFilters));",
+									"",
+									"// add schema DANY Movies Short filters to schema validation list",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYmovieSortFilter);",
+									"tv4.addSchema(schemaResponse);",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3c19cd5c-72fb-426f-9ac9-34dfff9b8c8d",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies sort filters\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// get global for Movies Sort Filter schema",
+									"var schemaResponse = JSON.parse(globals.g_schemaDANYmovieSortFilter);",
+									"var expectedSchema = tv4.getSchema(schemaResponse.id);",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"helpers.checkRespSchema(respBody, expectedSchema, reqString + \" schema check\", false);",
+									"",
+									"// store Movie Sort filters via response; with sample array and initial index",
+									"movieFilterList = progHelpers.setFilterList(\"Moive Sort\", respBody, \"name\", \"slug\", ",
+									"    \"g_movieSortFilterList\",\"g_movieSortFilterSample\" );",
+									"postman.setGlobalVariable(\"g_movieSortFilterIndex\", 0);",
+									"",
+									"// output filter List vs sample list",
+									"var sortFilterList = JSON.parse(globals.g_movieSortFilterList);",
+									"var sortFilterSample = JSON.parse(globals.g_movieSortFilterSample);",
+									"progHelpers.cmpFilterListSample(\"Movie Sort\", sortFilterList,sortFilterSample);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}/sorts.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}",
+								"sorts.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies sort spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6ab7f550-b9e4-4c24-85d7-b0053e5c4298",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_movieSortFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_movieSortFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_movieSortFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_movieSortVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_movieSortDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "74d208b8-7687-4e02-9171-065290e2752d",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY Movies sort spec\";",
+									"var srchVal = globals.g_movieSortVal;",
+									"var srchDsp = globals.g_movieSortDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies sort '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"sort=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_movieSortFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample sorts",
+									"progHelpers.setNextProgAPIReq(\"g_movieSortFilterIndex\",\"g_movieSortFilterList\",\"g_movieSortFilterSample\",5,APIrequestName); ",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// Eval response",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var movieList = respBody.movies;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,5500,movieList.length);",
+									"",
+									"var mType = \"movie\";",
+									"var movieInfoList = [];",
+									"var movieInfoObj;",
+									"var movieRsp, cnt=0, strg;",
+									"for (var movieObj of movieList) {",
+									"    movieRsp = movieObj.movie;",
+									"    movieInfoObj = progHelpers.setProgObj(mType,movieRsp,cnt);",
+									"    movieInfoList.push(movieInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in movieInfoList) {",
+									"    progHelpers.dispProgObj(mType,infoPreStrg,movieInfoList[i]);",
+									"    if (i>0) {",
+									"      progHelpers.testProgSortOrder(mType,infoPreStrg,srchVal,movieInfoList[i],movieInfoList[i-1]);",
+									"    } ",
+									"    progHelpers.testBasicProgObj(mType,infoPreStrg,movieInfoList[i],5,1); // desc.length >= 5; genreList.length >= 1",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?sort={{g_movieSortVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_movies}}",
+								"{{g_dany_api_movies}}.json"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "{{g_movieSortVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies filters all",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1454c341-b47f-4cb0-af0d-9f7330834667",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"// init DANY Movie Genere Filter list to empty array",
+									"var movieGenreFilterList  = [];",
+									"postman.setGlobalVariable(\"g_movieGenreFilterList\", JSON.stringify(movieGenreFilterList));",
+									"",
+									"",
+									"// init DANY Movie Rating Filter list to empty array",
+									"var movieRatingFilterList  = [];",
+									"postman.setGlobalVariable(\"g_movieRatingFilterList\", JSON.stringify(movieRatingFilterList));",
+									"",
+									"// init DANY Movie Letter Filter list to empty array",
+									"var movieLetterFilterList  = [];",
+									"postman.setGlobalVariable(\"g_movieLetterFilterList\", JSON.stringify(movieLetterFilterList));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "8b84f227-cd55-4f85-b7d3-1bca7b5e7ddb",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies filters\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"",
+									"// store Genre global fliter list pairs (Display, Search) with sample array and initial index",
+									"movieFilterList = progHelpers.setFilterList(\"Movie Genre\", respBody.genres, \"name\", \"slug\",",
+									"    \"g_movieGenreFilterList\",\"g_movieGenreFilterSample\" );",
+									"postman.setGlobalVariable(\"g_movieGenreFilterIndex\", 0);",
+									"",
+									"// store Rating global fliter list pairs (Display, Search) with sample array and initial index",
+									"movieFilterList = progHelpers.setFilterList(\"Movie Rating\", respBody.ratings, \"name\", \"slug\",",
+									"    \"g_movieRatingFilterList\",\"g_movieRatingFilterSample\" );",
+									"postman.setGlobalVariable(\"g_movieRatingFilterIndex\", 0);",
+									"",
+									"// store Letter global fliter list pairs (Display, Search) with sample array and initial index",
+									"movieFilterList = progHelpers.setFilterList(\"Movie Letter\", respBody[\"a-z\"], \"name\", \"slug\", ",
+									"    \"g_movieLetterFilterList\",\"g_movieLetterFilterSample\" );",
+									"postman.setGlobalVariable(\"g_movieLetterFilterIndex\", 0);",
+									"",
+									"var outputG_Filters = [ ]; //  \"Genre\", \"Rating\", \"Letter\"",
+									"var filterType, gVar_filterList, gVar_filterSample, filterList, filterSample;",
+									"for (var filter of outputG_Filters) {",
+									"    filterType = \"Movie \"+ filter;",
+									"    gVar_filterList = \"g_movie\" + filter + \"FilterList\";",
+									"    gVar_filterSample = \"g_movie\" + filter + \"FilterSample\";",
+									"    // tests[\"output \" + gVar_filterList + \" vs \" + gVar_filterSample] = true; // display info - not a real test",
+									"    progHelpers.cmpFilterListSample(filterType,JSON.parse(globals[gVar_filterList]),JSON.parse(globals[gVar_filterSample]));",
+									"}",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}/filters.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}",
+								"filters.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies genre spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9630c170-cc0a-4368-a782-6bffdee9f6db",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_movieGenreFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_movieGenreFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_movieGenreFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_movieGenreVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_movieGenreDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "a51a4f82-7573-4ebf-9c2a-96761672c4ac",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY Movies genre spec\";",
+									"var srchVal = globals.g_movieGenreVal;",
+									"var srchDsp = globals.g_movieGenreDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies genre '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"genre=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_movieGenreFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_movieGenreFilterIndex\",\"g_movieGenreFilterList\",\"g_movieGenreFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var movieList = respBody.movies;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,movieList.length);",
+									"",
+									"var mType = \"movie\";",
+									"var movieInfoList = [];",
+									"var movieInfoObj;",
+									"var movieRsp, cnt=0, strg;",
+									"for (var movieObj of movieList) {",
+									"    movieRsp = movieObj.movie;",
+									"    movieInfoObj = progHelpers.setProgObj(mType,movieRsp,cnt);",
+									"    movieInfoList.push(movieInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in movieInfoList) {",
+									"    progHelpers.dispProgObj(mType,infoPreStrg,movieInfoList[i]);",
+									"    progHelpers.testProgHaveGenre(mType,infoPreStrg,srchDsp,srchVal,movieInfoList[i]);",
+									"    progHelpers.testBasicProgObj(mType,infoPreStrg,movieInfoList[i],0,1); // desc.length >= 0; genreList.length >= 1",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?genres={{g_movieGenreVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_movies}}",
+								"{{g_dany_api_movies}}.json"
+							],
+							"query": [
+								{
+									"key": "genres",
+									"value": "{{g_movieGenreVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies rating spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8a868022-3af5-487e-b4b5-85cdd6b579f9",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_movieRatingFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_movieRatingFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_movieRatingFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_movieRateVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_movieRateDsp\", filterList[index].AppDisplay);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "854ce78d-1044-4f5d-b52f-c6c93323a0a8",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY Movies rating spec\";",
+									"var srchVal = globals.g_movieRateVal;",
+									"var srchDsp = globals.g_movieRateDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies rate '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"rating=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_movieRatingFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_movieRatingFilterIndex\",\"g_movieRatingFilterList\",\"g_movieRatingFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var movieList = respBody.movies;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,movieList.length,srchVal == \"all\");",
+									"",
+									"var mType = \"movie\";",
+									"var movieInfoList = [];",
+									"var movieInfoObj;",
+									"var movieRsp, cnt=0, strg;",
+									"for (var movieObj of movieList) {",
+									"    movieRsp = movieObj.movie;",
+									"    movieInfoObj = progHelpers.setProgObj(mType,movieRsp,cnt);",
+									"    movieInfoList.push(movieInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in movieInfoList) {",
+									"    progHelpers.dispProgObj(mType,infoPreStrg,movieInfoList[i]);",
+									"    progHelpers.testProgHaveRating(mType,infoPreStrg,srchDsp,srchVal,movieInfoList[i]);",
+									"    progHelpers.testBasicProgObj(mType,infoPreStrg,movieInfoList[i],0,0); // desc.length >= 0; genreList.length >= 0",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?ratings={{g_movieRateVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_movies}}",
+								"{{g_dany_api_movies}}.json"
+							],
+							"query": [
+								{
+									"key": "ratings",
+									"value": "{{g_movieRateVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY Movies letter spec",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f91b7016-2041-4fa5-bcf9-92f5a602d2b1",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var index = Number(globals.g_movieLetterFilterIndex);",
+									"var filterList;",
+									"",
+									"if (environment.e_exec_type.toLowerCase() === \"sample\") {",
+									" filterList = JSON.parse(globals.g_movieLetterFilterSample);",
+									"} else {",
+									" filterList = JSON.parse(globals.g_movieLetterFilterList);  ",
+									"}",
+									"postman.setGlobalVariable(\"g_movieLetterVal\", filterList[index].ApiSearch);",
+									"postman.setGlobalVariable(\"g_movieLetterDsp\", filterList[index].AppDisplay);",
+									"//postman.setGlobalVariable(\"g_movieLetterVal\", \"123\");",
+									"//postman.setGlobalVariable(\"g_movieLetterDsp\", \"#\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c143b077-8f83-4d23-bb7d-3a5973d448e8",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = \"Get DANY Movies letter spec\";",
+									"var srchVal = globals.g_movieLetterVal;",
+									"var srchDsp = globals.g_movieLetterDsp;",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY Movies letter '\" + srchDsp + \"' via search \"+srchVal;",
+									"var infoPreStrg  = \"a-z=\"+srchVal;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"var index = Number(globals.g_movieLetterFilterIndex);",
+									"",
+									"// set up next API request for testing all or sample genres",
+									"progHelpers.setNextProgAPIReq(\"g_movieLetterFilterIndex\",\"g_movieLetterFilterList\",\"g_movieLetterFilterSample\",5,APIrequestName);  ",
+									" ",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var movieList = respBody.movies;",
+									"",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,movieList.length);",
+									"",
+									"var mType = \"movie\";",
+									"var movieInfoList = [];",
+									"var movieInfoObj;",
+									"var movieRsp, cnt=0, strg;",
+									"for (var movieObj of movieList) {",
+									"    movieRsp = movieObj.movie;",
+									"    movieInfoObj = progHelpers.setProgObj(mType,movieRsp,cnt);",
+									"    movieInfoList.push(movieInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in movieInfoList) {",
+									"    progHelpers.dispProgObj(mType,infoPreStrg,movieInfoList[i]);",
+									"    progHelpers.testProgHaveLetter(mType,infoPreStrg,srchDsp,srchVal,movieInfoList[i]);",
+									"    progHelpers.testBasicProgObj(mType,infoPreStrg,movieInfoList[i],0,0); // desc.length >= 0; genreList.length >= 0",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?a-z={{g_movieLetterVal}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_movies}}",
+								"{{g_dany_api_movies}}.json"
+							],
+							"query": [
+								{
+									"key": "a-z",
+									"value": "{{g_movieLetterVal}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End DANY Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "43cfc45e-ab52-4fb9-977a-9f2d04c3acae",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "270cccc2-2395-4d88-8179-376b39c206d1",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = \"End DANY Movies\";",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DANY Others",
+			"item": [
+				{
+					"name": "Get DANY TV Shows letters",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a6dd3156-4c48-42bd-b764-61a281d55ef6",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "2674a546-4219-4be5-ab09-956f0320b363",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows letters\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
+							"protocol": "http",
+							"host": [
+								"radish",
+								"dishanywhere",
+								"com"
+							],
+							"path": [
+								"v20",
+								"dol",
+								"shows.json"
+							],
+							"query": [
+								{
+									"key": "itemStart",
+									"value": "1"
+								},
+								{
+									"key": "totalItems",
+									"value": "20"
+								},
+								{
+									"key": "video_type",
+									"value": "full_only"
+								},
+								{
+									"key": "media_type_filter",
+									"value": "shows"
+								},
+								{
+									"key": "genres",
+									"value": "adventure"
+								},
+								{
+									"key": "ratings",
+									"value": "tvpg"
+								},
+								{
+									"key": "a-z",
+									"value": "c"
+								},
+								{
+									"key": "sort",
+									"value": "most_popular"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows genres, ratings, sort",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "62e77523-1366-4cd5-9922-785e46a15ae7",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "79f438a4-7fbd-4fa3-8c7b-b6c1aec74ae7",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows genres, ratings, sort\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&sort=most_popular",
+							"protocol": "http",
+							"host": [
+								"radish",
+								"dishanywhere",
+								"com"
+							],
+							"path": [
+								"v20",
+								"dol",
+								"shows.json"
+							],
+							"query": [
+								{
+									"key": "itemStart",
+									"value": "1"
+								},
+								{
+									"key": "totalItems",
+									"value": "20"
+								},
+								{
+									"key": "video_type",
+									"value": "full_only"
+								},
+								{
+									"key": "media_type_filter",
+									"value": "shows"
+								},
+								{
+									"key": "genres",
+									"value": "adventure"
+								},
+								{
+									"key": "ratings",
+									"value": "tvpg"
+								},
+								{
+									"key": "sort",
+									"value": "most_popular"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DANY TV Shows all types",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "870f6798-167e-49d6-926b-f9de2026b3dc",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "b75806e2-2c92-4476-a23f-f9e89ded3104",
+								"type": "text/javascript",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = \"Get DANY TV Shows all types\";",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
+							"protocol": "http",
+							"host": [
+								"radish",
+								"dishanywhere",
+								"com"
+							],
+							"path": [
+								"v20",
+								"dol",
+								"shows.json"
+							],
+							"query": [
+								{
+									"key": "itemStart",
+									"value": "1"
+								},
+								{
+									"key": "totalItems",
+									"value": "20"
+								},
+								{
+									"key": "media_type_filter",
+									"value": "shows"
+								},
+								{
+									"key": "genres",
+									"value": "adventure"
+								},
+								{
+									"key": "ratings",
+									"value": "tvpg"
+								},
+								{
+									"key": "a-z",
+									"value": "c"
+								},
+								{
+									"key": "sort",
+									"value": "most_popular"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a27ac370-49b8-49d6-9097-7aeed44c735b",
+				"type": "text/javascript",
+				"exec": [
+					"var reqString = \"Collection: DANY\";",
+					"console.log(reqString+\" - Pre Request Script\");",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "6a241da7-c2ec-435b-8367-d23280c72327",
+				"type": "text/javascript",
+				"exec": [
+					"var reqString = \"Collection: DANY\";",
+					"console.log(reqString+\" - Post Recieve Script\");"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "b9d0437e-3abb-48b1-a1cb-1e013d3a4663",
+			"key": "c_ok_code",
+			"value": "200",
+			"type": "string"
+		},
+		{
+			"id": "7d918e79-8df0-46b3-9e39-387f81ad57db",
+			"key": "c_bad_code",
+			"value": "404",
+			"type": "string"
+		}
+	]
+}
