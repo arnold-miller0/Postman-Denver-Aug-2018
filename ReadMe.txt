@@ -93,7 +93,7 @@
 #
 # programs versions
 # Postman v6.2.4
-# newman v3.9.4
+# newman v4.0.2
 # ruby 2.4.1p111 (2017-03-22 revision 58053) [x64-mingw32]
 # ruby gem json 2.1.0
 # ruby gem csv 1.0.0
