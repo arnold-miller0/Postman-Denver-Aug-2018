@@ -25,7 +25,7 @@ ruby dish_postman_env_change.rb $post_inp_env $postman_csv "." $post_out_env 0 1
 
 junit_output=./output/${test_name_base}_${test_env_base}_junit.xml
 sTime=`date`
-newman run $postman_run -e $post_out_env -r junit,cli --timeout-request $req_timeout
+newman run $postman_run -e $post_out_env -r junit,cli --timeout-request $req_timeout --color on
 etime=`date`
 echo "Postman start at $sTime"
 echo "Postman ended at $etime"
