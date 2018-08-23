@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fdeb44ba-76ea-424b-9a8c-39645bca44b9",
+		"_postman_id": "be63e692-e028-4915-89bb-ec7301ba7486",
 		"name": "DishAnyWhere_Programs",
 		"description": "Sample API testing \nDishAnyWhere All TV Shows web page  http://www.dishanywhere.com/ondemand/all/shows\nDishAnyWhere All Movies web page  http://www.dishanywhere.com/ondemand/all/movies",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2870,293 +2870,674 @@
 			"name": "DANY Others",
 			"item": [
 				{
-					"name": "Get DANY TV Shows letters",
-					"event": [
+					"name": "TV  SHOWS Numbers",
+					"item": [
 						{
-							"listen": "prerequest",
-							"script": {
-								"id": "a6dd3156-4c48-42bd-b764-61a281d55ef6",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);"
-								]
-							}
+							"name": "Get DANY TV Shows numbers all",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "b82ba9fc-c81e-492d-9b59-763bb71e342c",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var showNumberList = [ { \"name\": \"0\", \"slug\": \"0\" },",
+											"    { \"name\": \"1\", \"slug\": \"1\" }, { \"name\": \"2\", \"slug\": \"2\" }, { \"name\": \"3\", \"slug\": \"3\" },",
+											"    { \"name\": \"4\", \"slug\": \"4\" }, { \"name\": \"5\", \"slug\": \"5\" }, { \"name\": \"6\", \"slug\": \"6\" },",
+											"    { \"name\": \"7\", \"slug\": \"7\" }, { \"name\": \"8\", \"slug\": \"8\" }, { \"name\": \"9\", \"slug\": \"9\" }",
+											"    ];",
+											"",
+											"// store Genre global fliter list pairs (Display, Search) with sample array and initial index",
+											"showFilterList = progHelpers.setFilterList(\"Show Numbers\", showNumberList, \"name\", \"slug\",",
+											"    \"g_showNumberFilterList\",\"g_showNumberFilterSample\" );",
+											"postman.setGlobalVariable(\"g_showNumberFilterIndex\", 0);",
+											"",
+											"console.log(showFilterList);",
+											"    ",
+											"postman.setGlobalVariable(\"g_showLetterVal\", \"123\");",
+											"postman.setGlobalVariable(\"g_showLetterDsp\", \"#\");",
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "3cbcbb82-de73-4a58-b64e-c3d76c870ea5",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var APIrequestName = request.name;",
+											"var srchVal = globals.g_showLetterVal;",
+											"var srchDsp = globals.g_showLetterDsp;",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = APIrequestName + \" '\" + srchDsp + \"' via search \"+srchVal;",
+											"var infoPreStrg  = \"a-z=\"+srchVal;",
+											"",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											" ",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											"",
+											"var respBody = JSON.parse(responseBody);",
+											"var totCount = respBody.count;",
+											"var showList = respBody.shows;",
+											"",
+											"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?a-z={{g_showLetterVal}}",
+									"host": [
+										"{{g_API_HOST_URL}}"
+									],
+									"path": [
+										"{{g_dany_ver_shows}}",
+										"{{g_dany_api_shows}}.json"
+									],
+									"query": [
+										{
+											"key": "a-z",
+											"value": "{{g_showLetterVal}}"
+										}
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"listen": "test",
-							"script": {
-								"id": "2674a546-4219-4be5-ab09-956f0320b363",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);",
-									"",
-									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY TV Shows letters\";",
-									"helpers.checkStatusCode(okCode, reqString + \": \");",
-									"",
-									"// need expected code to do schema validation",
-									"if (responseCode.code !== okCode) {",
-									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
-									"    return;",
-									"}",
-									""
-								]
-							}
+							"name": "Get DANY TV Shows number spec",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "07c61ac5-407e-4f1e-8eff-f3bfd1aa954d",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var index = Number(globals.g_showNumberFilterIndex);",
+											"var filterList;",
+											"",
+											"filterList = JSON.parse(globals.g_showNumberFilterList);",
+											"",
+											"postman.setGlobalVariable(\"g_showLetterVal\", filterList[index].ApiSearch);",
+											"postman.setGlobalVariable(\"g_showLetterDsp\", filterList[index].AppDisplay);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "b63b2810-9604-493a-b12f-28ec4c0431ed",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var APIrequestName = request.name;",
+											"var srchVal = globals.g_showLetterVal;",
+											"var srchDsp = globals.g_showLetterDsp;",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = APIrequestName + \" '\" + srchDsp + \"' via search \"+srchVal;",
+											"var infoPreStrg  = \"a-z=\"+srchVal;",
+											"",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											"",
+											"var index = Number(globals.g_showNumberIndex);",
+											"",
+											"// set up next API request for testing all or sample genres",
+											"progHelpers.setNextProgAPIReq(\"g_showNumberFilterIndex\",\"g_showNumberFilterList\",\"g_showNumberFilterSample\",5,APIrequestName);  ",
+											" ",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											"",
+											"var respBody = JSON.parse(responseBody);",
+											"var totCount = respBody.count;",
+											"var showList = respBody.shows;",
+											"",
+											"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?a-z={{g_showLetterVal}}",
+									"host": [
+										"{{g_API_HOST_URL}}"
+									],
+									"path": [
+										"{{g_dany_ver_shows}}",
+										"{{g_dany_api_shows}}.json"
+									],
+									"query": [
+										{
+											"key": "a-z",
+											"value": "{{g_showLetterVal}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
-							"protocol": "http",
-							"host": [
-								"radish",
-								"dishanywhere",
-								"com"
-							],
-							"path": [
-								"v20",
-								"dol",
-								"shows.json"
-							],
-							"query": [
-								{
-									"key": "itemStart",
-									"value": "1"
-								},
-								{
-									"key": "totalItems",
-									"value": "20"
-								},
-								{
-									"key": "video_type",
-									"value": "full_only"
-								},
-								{
-									"key": "media_type_filter",
-									"value": "shows"
-								},
-								{
-									"key": "genres",
-									"value": "adventure"
-								},
-								{
-									"key": "ratings",
-									"value": "tvpg"
-								},
-								{
-									"key": "a-z",
-									"value": "c"
-								},
-								{
-									"key": "sort",
-									"value": "most_popular"
-								}
-							]
-						}
-					},
-					"response": []
+					"description": "TV Shows whose name start with numbers",
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get DANY TV Shows genres, ratings, sort",
-					"event": [
+					"name": "MOVIES Numbers",
+					"item": [
 						{
-							"listen": "prerequest",
-							"script": {
-								"id": "62e77523-1366-4cd5-9922-785e46a15ae7",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);"
-								]
-							}
+							"name": "Get DANY Movies Numbers all",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "831de49f-edaf-4555-a6c5-abed0f7085b1",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var movieNumberList = [ { \"name\": \"0\", \"slug\": \"0\" },",
+											"    { \"name\": \"1\", \"slug\": \"1\" }, { \"name\": \"2\", \"slug\": \"2\" }, { \"name\": \"3\", \"slug\": \"3\" },",
+											"    { \"name\": \"4\", \"slug\": \"4\" }, { \"name\": \"5\", \"slug\": \"5\" }, { \"name\": \"6\", \"slug\": \"6\" },",
+											"    { \"name\": \"7\", \"slug\": \"7\" }, { \"name\": \"8\", \"slug\": \"8\" }, { \"name\": \"9\", \"slug\": \"9\" }",
+											"    ];",
+											"",
+											"// store Genre global fliter list pairs (Display, Search) with sample array and initial index",
+											"filterList = progHelpers.setFilterList(\"Movie Numbers\", movieNumberList, \"name\", \"slug\",",
+											"    \"g_movieNumberFilterList\",\"g_movieNumberFilterSample\" );",
+											"postman.setGlobalVariable(\"g_movieNumberFilterIndex\", 0);",
+											"",
+											"console.log(filterList);",
+											"    ",
+											"postman.setGlobalVariable(\"g_movieLetterVal\", \"123\");",
+											"postman.setGlobalVariable(\"g_movieLetterDsp\", \"#\");",
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "37ba9498-9a5d-482e-9f79-341e54c7560c",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var APIrequestName = request.name;",
+											"var srchVal = globals.g_movieLetterVal;",
+											"var srchDsp = globals.g_movieLetterDsp;",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = APIrequestName + \" '\" + srchDsp + \"' via search \"+srchVal;",
+											"var infoPreStrg  = \"a-z=\"+srchVal;",
+											"",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											" ",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											"",
+											"var respBody = JSON.parse(responseBody);",
+											"var totCount = respBody.count;",
+											"var movieList = respBody.movies;",
+											"",
+											"progHelpers.testProgTotalListCounts(reqString,totCount,0,movieList.length);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?a-z={{g_movieLetterVal}}",
+									"host": [
+										"{{g_API_HOST_URL}}"
+									],
+									"path": [
+										"{{g_dany_ver_movies}}",
+										"{{g_dany_api_movies}}.json"
+									],
+									"query": [
+										{
+											"key": "a-z",
+											"value": "{{g_movieLetterVal}}"
+										}
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"listen": "test",
-							"script": {
-								"id": "79f438a4-7fbd-4fa3-8c7b-b6c1aec74ae7",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);",
-									"",
-									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY TV Shows genres, ratings, sort\";",
-									"helpers.checkStatusCode(okCode, reqString + \": \");",
-									"",
-									"// need expected code to do schema validation",
-									"if (responseCode.code !== okCode) {",
-									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
-									"    return;",
-									"}",
-									""
-								]
-							}
+							"name": "Get DANY Movies number spec",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "248d407a-acc5-48c1-80bf-09467fe6482e",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var index = Number(globals.g_movieNumberFilterIndex);",
+											"var filterList;",
+											"",
+											"filterList = JSON.parse(globals.g_movieNumberFilterList);",
+											"",
+											"postman.setGlobalVariable(\"g_movieLetterVal\", filterList[index].ApiSearch);",
+											"postman.setGlobalVariable(\"g_movieLetterDsp\", filterList[index].AppDisplay);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "b4df5580-9e96-4f48-95d9-b33ddc19f35c",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var APIrequestName = request.name;",
+											"var srchVal = globals.g_movieLetterVal;",
+											"var srchDsp = globals.g_movieLetterDsp;",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = APIrequestName + \" '\" + srchDsp + \"' via search \"+srchVal;",
+											"var infoPreStrg  = \"a-z=\"+srchVal;",
+											"",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											"",
+											"var index = Number(globals.g_movieNumberIndex);",
+											"",
+											"// set up next API request for testing all or sample genres",
+											"progHelpers.setNextProgAPIReq(\"g_movieNumberFilterIndex\",\"g_movieNumberFilterList\",\"g_movieNumberFilterSample\",5,APIrequestName);  ",
+											" ",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											"",
+											"var respBody = JSON.parse(responseBody);",
+											"var totCount = respBody.count;",
+											"var movieList = respBody.movies;",
+											"",
+											"progHelpers.testProgTotalListCounts(reqString,totCount,0,movieList.length);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?a-z={{g_movieLetterVal}}",
+									"host": [
+										"{{g_API_HOST_URL}}"
+									],
+									"path": [
+										"{{g_dany_ver_movies}}",
+										"{{g_dany_api_movies}}.json"
+									],
+									"query": [
+										{
+											"key": "a-z",
+											"value": "{{g_movieLetterVal}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&sort=most_popular",
-							"protocol": "http",
-							"host": [
-								"radish",
-								"dishanywhere",
-								"com"
-							],
-							"path": [
-								"v20",
-								"dol",
-								"shows.json"
-							],
-							"query": [
-								{
-									"key": "itemStart",
-									"value": "1"
-								},
-								{
-									"key": "totalItems",
-									"value": "20"
-								},
-								{
-									"key": "video_type",
-									"value": "full_only"
-								},
-								{
-									"key": "media_type_filter",
-									"value": "shows"
-								},
-								{
-									"key": "genres",
-									"value": "adventure"
-								},
-								{
-									"key": "ratings",
-									"value": "tvpg"
-								},
-								{
-									"key": "sort",
-									"value": "most_popular"
-								}
-							]
-						}
-					},
-					"response": []
+					"description": "Moives whose name start with numbers",
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get DANY TV Shows all types",
-					"event": [
+					"name": "Sample Mix Sort Filters",
+					"item": [
 						{
-							"listen": "prerequest",
-							"script": {
-								"id": "870f6798-167e-49d6-926b-f9de2026b3dc",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);"
-								]
-							}
+							"name": "Get DANY TV Shows letters",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a6dd3156-4c48-42bd-b764-61a281d55ef6",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "2674a546-4219-4be5-ab09-956f0320b363",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = \"Get DANY TV Shows letters\";",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											"",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
+									"protocol": "http",
+									"host": [
+										"radish",
+										"dishanywhere",
+										"com"
+									],
+									"path": [
+										"v20",
+										"dol",
+										"shows.json"
+									],
+									"query": [
+										{
+											"key": "itemStart",
+											"value": "1"
+										},
+										{
+											"key": "totalItems",
+											"value": "20"
+										},
+										{
+											"key": "video_type",
+											"value": "full_only"
+										},
+										{
+											"key": "media_type_filter",
+											"value": "shows"
+										},
+										{
+											"key": "genres",
+											"value": "adventure"
+										},
+										{
+											"key": "ratings",
+											"value": "tvpg"
+										},
+										{
+											"key": "a-z",
+											"value": "c"
+										},
+										{
+											"key": "sort",
+											"value": "most_popular"
+										}
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"listen": "test",
-							"script": {
-								"id": "b75806e2-2c92-4476-a23f-f9e89ded3104",
-								"type": "text/javascript",
-								"exec": [
-									"// load helper functions ",
-									"var helpers = eval(globals.loadHelpers);",
-									"var _ = require('lodash');",
-									"var progHelpers = eval(globals.loadProgHelpers);",
-									"",
-									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY TV Shows all types\";",
-									"helpers.checkStatusCode(okCode, reqString + \": \");",
-									"",
-									"// need expected code to do schema validation",
-									"if (responseCode.code !== okCode) {",
-									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
-									"    return;",
-									"}",
-									""
-								]
-							}
+							"name": "Get DANY TV Shows genres, ratings, sort",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "62e77523-1366-4cd5-9922-785e46a15ae7",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "79f438a4-7fbd-4fa3-8c7b-b6c1aec74ae7",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = \"Get DANY TV Shows genres, ratings, sort\";",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											"",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&sort=most_popular",
+									"protocol": "http",
+									"host": [
+										"radish",
+										"dishanywhere",
+										"com"
+									],
+									"path": [
+										"v20",
+										"dol",
+										"shows.json"
+									],
+									"query": [
+										{
+											"key": "itemStart",
+											"value": "1"
+										},
+										{
+											"key": "totalItems",
+											"value": "20"
+										},
+										{
+											"key": "video_type",
+											"value": "full_only"
+										},
+										{
+											"key": "media_type_filter",
+											"value": "shows"
+										},
+										{
+											"key": "genres",
+											"value": "adventure"
+										},
+										{
+											"key": "ratings",
+											"value": "tvpg"
+										},
+										{
+											"key": "sort",
+											"value": "most_popular"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get DANY TV Shows all types",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "870f6798-167e-49d6-926b-f9de2026b3dc",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "b75806e2-2c92-4476-a23f-f9e89ded3104",
+										"type": "text/javascript",
+										"exec": [
+											"// load helper functions ",
+											"var helpers = eval(globals.loadHelpers);",
+											"var _ = require('lodash');",
+											"var progHelpers = eval(globals.loadProgHelpers);",
+											"",
+											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+											"var reqString = \"Get DANY TV Shows all types\";",
+											"helpers.checkStatusCode(okCode, reqString + \": \");",
+											"",
+											"// need expected code to do schema validation",
+											"if (responseCode.code !== okCode) {",
+											"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+											"    return;",
+											"}",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
+									"protocol": "http",
+									"host": [
+										"radish",
+										"dishanywhere",
+										"com"
+									],
+									"path": [
+										"v20",
+										"dol",
+										"shows.json"
+									],
+									"query": [
+										{
+											"key": "itemStart",
+											"value": "1"
+										},
+										{
+											"key": "totalItems",
+											"value": "20"
+										},
+										{
+											"key": "media_type_filter",
+											"value": "shows"
+										},
+										{
+											"key": "genres",
+											"value": "adventure"
+										},
+										{
+											"key": "ratings",
+											"value": "tvpg"
+										},
+										{
+											"key": "a-z",
+											"value": "c"
+										},
+										{
+											"key": "sort",
+											"value": "most_popular"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
-							"protocol": "http",
-							"host": [
-								"radish",
-								"dishanywhere",
-								"com"
-							],
-							"path": [
-								"v20",
-								"dol",
-								"shows.json"
-							],
-							"query": [
-								{
-									"key": "itemStart",
-									"value": "1"
-								},
-								{
-									"key": "totalItems",
-									"value": "20"
-								},
-								{
-									"key": "media_type_filter",
-									"value": "shows"
-								},
-								{
-									"key": "genres",
-									"value": "adventure"
-								},
-								{
-									"key": "ratings",
-									"value": "tvpg"
-								},
-								{
-									"key": "a-z",
-									"value": "c"
-								},
-								{
-									"key": "sort",
-									"value": "most_popular"
-								}
-							]
-						}
-					},
-					"response": []
+					"description": "sample get TV Shows and Movies with mix sort and filters ",
+					"_postman_isSubFolder": true
 				}
 			]
 		}
