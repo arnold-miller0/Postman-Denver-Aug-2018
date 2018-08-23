@@ -1,4 +1,4 @@
-# Date 14 Aug 2018
+# Date 22 Aug 2018
 #
 # Postman REST API https://www.getpostman.com/
 # Examples via Free version without a Postman account
@@ -11,7 +11,7 @@
 #     Sub-Folder (Pre-request Script, Test Script)
 #       Request (Pre-request Script, Test Script)
 #
-# v6.2.4 Request Execution
+# v6.2.5 Request Execution
 # https://www.getpostman.com/docs/postman/scripts/intro_to_scripts
 # 1 Exec: Collection Pre-request Script
 # 2 Exec: Folder Pre-request Script
@@ -74,7 +74,7 @@
 # moment v2.18.1 (sans locales) dates, times, zones, - in example
 # postman-collection v1.2.0
 # tv4 v1.2.7     JSON schema Validator - in example
-# uuid           Universally Unique IDentifier 
+# uuid           Universally Unique IDentifier
 # xml2js 0.4.19  XML to JavaScript converter
 #
 # Dish On-Line web site (TV Shows and Movies)
@@ -92,7 +92,7 @@
 # via REST API radish.dishanywhere.com/v20/dol/movies
 #
 # programs versions
-# Postman v6.2.4
+# Postman v6.2.5
 # newman v4.0.2
 # ruby 2.4.1p111 (2017-03-22 revision 58053) [x64-mingw32]
 # ruby gem json 2.1.0
