@@ -160,7 +160,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1fc14544-44ee-40d7-9d01-507bf437a236",
+										"id": "b20a19fd-d793-4fd2-aafe-6fda7d3b132c",
 										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
@@ -168,7 +168,7 @@
 											"var _ = require('lodash');",
 											"",
 											"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
-											"var reqString = request.name + \" \";",
+											"var reqString = request.name;",
 											"console.log(\"Request: \"+reqString+\" - Test Script, response msec \" + responseTime);",
 											"helpers.checkStatusCode(rspCode, reqString + \": \");",
 											"",
@@ -249,7 +249,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dbc8cede-12a8-4efd-98b5-2a4c1dcc95f9",
+								"id": "e543211d-5d09-4207-9c4a-a15e9a87cddc",
 								"type": "text/javascript",
 								"exec": [
 									"// https://www.getpostman.com/docs/postman/scripts/postman_sandbox_api_reference",
@@ -270,7 +270,7 @@
 									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
 									"var badCode = Number(pm.variables.get(\"c_bad_code\"));",
 									"",
-									"var reqString = \"Get DishAnyWhere Web base\"; ",
+									"var reqString = request.name; ",
 									"helpers.checkStatusCode(okCode, reqString + \": \");",
 									"// helpers.checkStatusCode(badCode, reqString + \": \");",
 									"",
@@ -385,7 +385,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "389eb628-6abe-4ec4-9a24-3539d446fe81",
+								"id": "b2dc6b96-a5cc-4bd6-abe3-9b65747906bb",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -393,7 +393,7 @@
 									"var _ = require('lodash');",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DishAnyWhere Web Health\";",
+									"var reqString = request.name + \" Health\";",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -546,7 +546,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bc5c3cd4-b58c-463b-8b43-b7aab59f78db",
+								"id": "a396d0cc-dac6-4c88-96c6-348d21585473",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -555,7 +555,7 @@
 									"// lodash v4.17.2",
 									"var _ = require('lodash');",
 									"",
-									"var reqString = \"Get DishAnyWhere API Base\";",
+									"var reqString = request.name;",
 									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
@@ -614,7 +614,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f434ee8e-e656-45ee-8eed-b7083617d490",
+								"id": "5aeca4a8-4286-4b5a-ad3c-8df271975e44",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -622,7 +622,7 @@
 									"var _ = require('lodash');",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DishAnyWhere API Health\";",
+									"var reqString = request.name + \" Health\";",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -679,7 +679,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "39025d82-7ac9-4cae-8ed5-a4fe101ead69",
+								"id": "eaad3ae7-c196-41c0-9a13-e2e20a372156",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -687,7 +687,7 @@
 									"var _ = require('lodash');",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DishAnyWhere API Health\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -1146,7 +1146,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "383ef8f0-7a45-4d64-bd13-98d2a588cc5b",
+								"id": "6fab6b75-ba46-44be-810f-203af4e5d7c5",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1155,7 +1155,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
-									"var reqString = \"Set Program helpers\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -1236,7 +1236,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d0bbce9a-2213-45c0-ae63-d085b1189b4c",
+								"id": "eb13a670-c91d-43a8-b3a3-fce5f81b618d",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1245,7 +1245,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
-									"var reqString = \"Start DANY TV Shows\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -1340,7 +1340,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e12d185c-eab6-47f9-8f69-375121cafcf5",
+								"id": "acdbe2df-46db-4725-aee1-8037d601cfef",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1349,7 +1349,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY TV Shows sorts\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(okCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -1430,7 +1430,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7fe98a41-05eb-4631-8218-550018d90714",
+								"id": "741804ce-ab28-43a6-a315-177cec0f3345",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1438,7 +1438,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY TV Shows sort spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_showSortVal;",
 									"var srchDsp = globals.g_showSortDsp;",
 									"",
@@ -1548,7 +1548,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e4bb8254-92e2-4820-a210-0bedc2a6b02a",
+								"id": "6ea3e8f4-2e43-47c2-8689-804bc0f3b75d",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1558,7 +1558,7 @@
 									"",
 									"",
 									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY TV Shows filters\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(okCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -1650,7 +1650,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d6699abd-ccbc-43ef-9c4a-cd989fbc8efe",
+								"id": "6a3a8166-2308-4a93-bc8d-97f82e394d1d",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1658,7 +1658,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY TV Shows genre spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_showGenreVal;",
 									"var srchDsp = globals.g_showGenreDsp;",
 									"",
@@ -1761,7 +1761,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "eb06914d-d72f-4e48-bcf2-4e4d7cd5d9a9",
+								"id": "e97647de-5ef7-43eb-93ea-d56d91d0fd2f",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1769,7 +1769,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY TV Shows rating spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_showRateVal;",
 									"var srchDsp = globals.g_showRateDsp;",
 									"",
@@ -1874,7 +1874,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "dbdf0de4-a383-4935-83f7-fe69f5cdfdaa",
+								"id": "864d74c2-51de-4805-89fd-a9da82c3dc62",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1882,7 +1882,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY TV Shows letter spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_showLetterVal;",
 									"var srchDsp = globals.g_showLetterDsp;",
 									"",
@@ -1974,7 +1974,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ea01029b-9331-46ab-a9ac-43bd0a581062",
+								"id": "e8cb55e3-12fe-404e-ad92-7f61dbd38ace",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1983,7 +1983,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
-									"var reqString = \"End DANY Movies\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -2065,7 +2065,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3655a624-b7a4-482d-a60f-f8019d734dec",
+								"id": "cfb654da-13c7-4567-98e3-14a867a18563",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2074,7 +2074,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
-									"var reqString = \"Start DANY Movies\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -2169,7 +2169,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3c19cd5c-72fb-426f-9ac9-34dfff9b8c8d",
+								"id": "0491b188-c410-4ba3-b7bd-382193004416",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2178,7 +2178,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY Movies sort filters\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(okCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -2259,7 +2259,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "74d208b8-7687-4e02-9171-065290e2752d",
+								"id": "f25d31b2-17c8-47c0-99b7-316bdaa4c146",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2267,7 +2267,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY Movies sort spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_movieSortVal;",
 									"var srchDsp = globals.g_movieSortDsp;",
 									"",
@@ -2377,7 +2377,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8b84f227-cd55-4f85-b7d3-1bca7b5e7ddb",
+								"id": "ebf4db59-77b6-4c05-ae23-31dd1dafc7d1",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2387,7 +2387,7 @@
 									"",
 									"",
 									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-									"var reqString = \"Get DANY Movies filters\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(okCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -2479,7 +2479,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a51a4f82-7573-4ebf-9c2a-96761672c4ac",
+								"id": "698e24f7-6d91-4cc5-b3c4-772f3441f3e3",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2487,7 +2487,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY Movies genre spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_movieGenreVal;",
 									"var srchDsp = globals.g_movieGenreDsp;",
 									"",
@@ -2590,7 +2590,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "854ce78d-1044-4f5d-b52f-c6c93323a0a8",
+								"id": "3979628d-c134-45a4-a804-8adabb89476e",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2598,7 +2598,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY Movies rating spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_movieRateVal;",
 									"var srchDsp = globals.g_movieRateDsp;",
 									"",
@@ -2703,7 +2703,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c143b077-8f83-4d23-bb7d-3a5973d448e8",
+								"id": "41ab97b4-266a-41d7-95ba-dc046f9c060b",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2711,7 +2711,7 @@
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
-									"var APIrequestName = \"Get DANY Movies letter spec\";",
+									"var APIrequestName = request.name;",
 									"var srchVal = globals.g_movieLetterVal;",
 									"var srchDsp = globals.g_movieLetterDsp;",
 									"",
@@ -2803,7 +2803,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "270cccc2-2395-4d88-8179-376b39c206d1",
+								"id": "c45639fd-4401-43a9-b694-95ece94ec77f",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -2812,7 +2812,7 @@
 									"var progHelpers = eval(globals.loadProgHelpers);",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
-									"var reqString = \"End DANY Movies\";",
+									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
 									"// need expected code to do schema validation",
@@ -3265,7 +3265,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2674a546-4219-4be5-ab09-956f0320b363",
+										"id": "c9543e54-2e5f-4df7-810e-f0a85536abd6",
 										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
@@ -3274,7 +3274,7 @@
 											"var progHelpers = eval(globals.loadProgHelpers);",
 											"",
 											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-											"var reqString = \"Get DANY TV Shows letters\";",
+											"var reqString = request.name;",
 											"helpers.checkStatusCode(okCode, reqString + \": \");",
 											"",
 											"// need expected code to do schema validation",
@@ -3364,7 +3364,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "79f438a4-7fbd-4fa3-8c7b-b6c1aec74ae7",
+										"id": "8f00c7e4-1851-4720-9f60-02b9b2d98b7a",
 										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
@@ -3373,7 +3373,7 @@
 											"var progHelpers = eval(globals.loadProgHelpers);",
 											"",
 											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-											"var reqString = \"Get DANY TV Shows genres, ratings, sort\";",
+											"var reqString = request.name;",
 											"helpers.checkStatusCode(okCode, reqString + \": \");",
 											"",
 											"// need expected code to do schema validation",
@@ -3459,7 +3459,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b75806e2-2c92-4476-a23f-f9e89ded3104",
+										"id": "80ba4693-0e90-490a-be35-e0ac28255a7f",
 										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
@@ -3468,7 +3468,7 @@
 											"var progHelpers = eval(globals.loadProgHelpers);",
 											"",
 											"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
-											"var reqString = \"Get DANY TV Shows all types\";",
+											"var reqString = request.name;",
 											"helpers.checkStatusCode(okCode, reqString + \": \");",
 											"",
 											"// need expected code to do schema validation",
