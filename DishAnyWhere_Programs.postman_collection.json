@@ -784,7 +784,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "85561132-eb11-4711-8423-79cfe35a388c",
+								"id": "234755a0-a57c-4a4e-b81c-75d35ba50f42",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -920,6 +920,7 @@
 									"    progObj.desc = progRsp.description;",
 									"    progObj.name = progRsp.name;",
 									"    progObj.search = progRsp.slug;",
+									"    progObj.dishId = progRsp.content_identification.content_id;",
 									"    progObj.type =progRsp._type;",
 									"    progObj.kind =progRsp.kind;",
 									"  ",
@@ -966,6 +967,7 @@
 									"      \"; name: \" + progObj.name + ",
 									"      \"; desc.length: \" + progObj.desc.length +",
 									"      \"; search: \" + progObj.search +",
+									"      \"; dishId: \" + progObj.dishId +",
 									"      \"; rating: \" + progObj.rating +",
 									"      \"; rList: \" + progObj.rateList +",
 									"      \"; gList: \" + progObj.genreList +",
@@ -1019,7 +1021,7 @@
 									"      case \"name\": // API show and movie",
 									"        helpers.CompareGreater(preStrg + \"; \"+pKind+\"[\"+i+\"].name > \"+pKind+\"[\"+j+\"].name\",progObj1.name,progObj0.name);",
 									"        if (progObj1.name <= progObj0.name) {",
-									"          helpers.CompareGreater(preStrg + \"; \"+pKind+\"[\"+i+\"].search > \"+pKind+\"[\"+j+\"].search\",progObj1.search,progObj0.search);",
+									"          helpers.CompareGreater(preStrg + \"; \"+pKind+\"[\"+i+\"].dishId > \"+pKind+\"[\"+j+\"].dishId\",progObj1.dishId,progObj0.dishId);",
 									"        }",
 									"      break;",
 									"      case \"rating\":",
@@ -1626,7 +1628,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "dddd157e-1aca-4d02-acb2-df3e9640122f",
+								"id": "a6570dac-2eb8-4688-b279-5bd61a19b22f",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1643,14 +1645,17 @@
 									" filterList = JSON.parse(globals.g_showGenreFilterList);  ",
 									"}",
 									"postman.setGlobalVariable(\"g_showGenreVal\", filterList[index].ApiSearch);",
-									"postman.setGlobalVariable(\"g_showGenreDsp\", filterList[index].AppDisplay);"
+									"postman.setGlobalVariable(\"g_showGenreDsp\", filterList[index].AppDisplay);",
+									"",
+									"//postman.setGlobalVariable(\"g_showGenreVal\", \"thriller\");",
+									"//postman.setGlobalVariable(\"g_showGenreDsp\", \"Thriller\");"
 								]
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "6a3a8166-2308-4a93-bc8d-97f82e394d1d",
+								"id": "4300d2bd-c6ec-4651-b42b-b5bb9437aaf8",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1684,6 +1689,8 @@
 									"var showList = respBody.shows;",
 									"",
 									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);",
+									"",
+									"//progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length,srchVal == \"thriller\");",
 									"",
 									"var sType = \"show\";",
 									"var showInfoList = [];",
