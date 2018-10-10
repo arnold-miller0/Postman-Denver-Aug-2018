@@ -1628,7 +1628,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "a6570dac-2eb8-4688-b279-5bd61a19b22f",
+								"id": "d34edd07-deec-4210-a21c-1f59f75b4d1b",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1655,7 +1655,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4300d2bd-c6ec-4651-b42b-b5bb9437aaf8",
+								"id": "f1831cbb-e12d-42ee-b354-fa63c1fe27a9",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1688,9 +1688,8 @@
 									"var totCount = respBody.count;",
 									"var showList = respBody.shows;",
 									"",
-									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);",
-									"",
-									"//progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length,srchVal == \"thriller\");",
+									"//progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length);",
+									"progHelpers.testProgTotalListCounts(reqString,totCount,0,showList.length,srchVal == \"thriller\");",
 									"",
 									"var sType = \"show\";",
 									"var showInfoList = [];",
@@ -1855,7 +1854,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "84cbff7b-3edb-4f93-83f5-74064eb048c2",
+								"id": "b4ff5dab-8d1b-4bbc-a57e-7c565561f3cf",
 								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
@@ -1873,6 +1872,7 @@
 									"}",
 									"postman.setGlobalVariable(\"g_showLetterVal\", filterList[index].ApiSearch);",
 									"postman.setGlobalVariable(\"g_showLetterDsp\", filterList[index].AppDisplay);",
+									"",
 									"//postman.setGlobalVariable(\"g_showLetterVal\", \"123\");",
 									"//postman.setGlobalVariable(\"g_showLetterDsp\", \"#\");"
 								]
@@ -3537,6 +3537,33 @@
 											"key": "sort",
 											"value": "most_popular"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sample get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://radish.dishanywhere.com/v20/dol/movies/count.json",
+									"protocol": "http",
+									"host": [
+										"radish",
+										"dishanywhere",
+										"com"
+									],
+									"path": [
+										"v20",
+										"dol",
+										"movies",
+										"count.json"
 									]
 								}
 							},

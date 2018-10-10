@@ -1,6 +1,6 @@
 row,Variable,Value,Meaning
-1,e_branch_web,18.3.0,web version
-2,e_branch_api,origin/18.3.0,api version
+1,e_branch_web,18.6.5,web version
+2,e_branch_api,origin/18.9.7,api version
 3,e_exec_type,sample,"all, sample"
 4,e_not_found,maybe,
 5,e_exec_tests,status,"status, shows, movies, programs"
