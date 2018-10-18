@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 # command line: run sample Postman script in Test Environment with
 # generating command line out and junit xml report file
 # report files are in created 'newman' sub-directory

@@ -2685,7 +2685,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "f91b7016-2041-4fa5-bcf9-92f5a602d2b1",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -2702,16 +2701,20 @@
 									"}",
 									"postman.setGlobalVariable(\"g_movieLetterVal\", filterList[index].ApiSearch);",
 									"postman.setGlobalVariable(\"g_movieLetterDsp\", filterList[index].AppDisplay);",
+									"",
+									"//postman.setGlobalVariable(\"g_movieLetterVal\", \"Q\");",
+									"//postman.setGlobalVariable(\"g_movieLetterDsp\", \"q\");",
+									"",
 									"//postman.setGlobalVariable(\"g_movieLetterVal\", \"123\");",
 									"//postman.setGlobalVariable(\"g_movieLetterDsp\", \"#\");"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "41ab97b4-266a-41d7-95ba-dc046f9c060b",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -2761,7 +2764,8 @@
 									"    progHelpers.testProgHaveLetter(mType,infoPreStrg,srchDsp,srchVal,movieInfoList[i]);",
 									"    progHelpers.testBasicProgObj(mType,infoPreStrg,movieInfoList[i],0,0); // desc.length >= 0; genreList.length >= 0",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
