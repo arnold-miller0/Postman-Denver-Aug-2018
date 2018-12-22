@@ -667,20 +667,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "4f14a29a-0a35-4c46-aa56-2e6a784d2655",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
 									"var _ = require('lodash');",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "eaad3ae7-c196-41c0-9a13-e2e20a372156",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -711,11 +710,18 @@
 									"  case \"shows\":",
 									"    postman.setNextRequest(\"Set Program helpers\");",
 									"  break;",
+									"   case \"shows\":",
+									"    postman.setNextRequest(\"Set Program helpers\");",
+									"  break;",
+									"   case \"counts\":",
+									"    postman.setNextRequest(\"Set Program helpers\");",
+									"  break;",
 									"  default:",
 									"    postman.setNextRequest(null);",
 									"  break;",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -784,8 +790,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "234755a0-a57c-4a4e-b81c-75d35ba50f42",
-								"type": "text/javascript",
+								"id": "5cb3087f-d429-4841-b3f5-b5323294a6c2",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -921,8 +926,8 @@
 									"    progObj.name = progRsp.name;",
 									"    progObj.search = progRsp.slug;",
 									"    progObj.dishId = progRsp.content_identification.content_id;",
-									"    progObj.type =progRsp._type;",
-									"    progObj.kind =progRsp.kind;",
+									"    progObj.type = progRsp._type;",
+									"    progObj.kind = progRsp.kind;",
 									"  ",
 									"    progObj.rating = progRsp.rating; ",
 									"    // progRsp. rating is array of values ",
@@ -975,6 +980,70 @@
 									"    tests[strg]=true; // display info - not a real test",
 									"  };",
 									"  ",
+									"  progHelpers.initCountProgObj = function initCountProgObj (",
+									"  ) {",
+									"      var counters = { ",
+									"        count: 0,",
+									"        noDesc: [],",
+									"        noRating: [],",
+									"        noGenre: [],",
+									"        noNetwork: []",
+									"        };",
+									"        postman.setGlobalVariable(\"g_counProgObj\", JSON.stringify(counters));",
+									"  };",
+									"  ",
+									"  progHelpers.evalCountProgObj = function setCountProgObj (",
+									"    pKind,   // kind of program show or movie",
+									"    preStrg, // pre string before any test Information",
+									"    progObj, // prog object to evaluate (ie test)",
+									"    minDescSize=1, // minimum description size",
+									"    minGenreSize=0 // minimum genreList size",
+									"  ) {",
+									"      var counters = JSON.parse(globals.g_counProgObj);",
+									"      counters.count ++;",
+									"      ",
+									"      if (progObj.desc.length < minDescSize) {",
+									"        counters.noDesc.push(progObj.search);",
+									"      }",
+									"      if (Array.isArray(progObj.rating) && progObj.rating.length < 1) {",
+									"        counters.noRating.push(progObj.search);",
+									"      }",
+									"      if (progObj.genreList.length < minGenreSize) {",
+									"        counters.noGenre.push(progObj.search);",
+									"      }",
+									"     if (progObj.networkList.length < 1) {",
+									"        counters.noNetwork.push(progObj.search);",
+									"     }",
+									"     postman.setGlobalVariable(\"g_counProgObj\", JSON.stringify(counters));",
+									"  };",
+									"  ",
+									"   progHelpers.dispCountProgObj = function getCountProgObj (",
+									"    preStrg,     // pre string before any test Information",
+									"    scaleTotal=0 // total value for scaling counts",
+									"  ) {",
+									"      var counters = JSON.parse(globals.g_counProgObj);",
+									"      ",
+									"      helpers.CompareLesser(preStrg + \"; counted Objects\",counters.count,0); ",
+									"      helpers.CompareEqual(preStrg + \"; no Description count\",counters.noDesc.length,0);",
+									"      helpers.CompareEqual(preStrg + \"; no Rating count\",counters.noRating.length,0);",
+									"      helpers.CompareEqual(preStrg + \"; no Genre count\",counters.noGenre.length,0);",
+									"      helpers.CompareEqual(preStrg + \"; no Newtork count\",counters.noNetwork.length,0);",
+									"      ",
+									"      if (scaleTotal > counters.count) {",
+									"        var scaleRatio = scaleTotal / counters.count;",
+									"        helpers.CompareLesser(preStrg + \"; Scaled Total\",",
+									"            Math.floor(counters.count * scaleRatio),0); ",
+									"        helpers.CompareEqual(preStrg + \"; no Description scale\",",
+									"            Math.floor(counters.noDesc.length * scaleRatio),0);",
+									"        helpers.CompareEqual(preStrg + \"; no Rating scale\",",
+									"            Math.floor(counters.noRating.length * scaleRatio),0);",
+									"        helpers.CompareEqual(preStrg + \"; no Genre scale\",",
+									"            Math.floor(counters.noGenre.length * scaleRatio),0);",
+									"        helpers.CompareEqual(preStrg + \"; no Newtork scale\",",
+									"            Math.floor(counters.noNetwork.length * scaleRatio),0);",
+									"      }",
+									"  };",
+									"  ",
 									"  progHelpers.testBasicProgObj = function evalProgObj (",
 									"    pKind,   // kind of program show or movie",
 									"    preStrg, // pre string before any test Information",
@@ -983,10 +1052,15 @@
 									"    minGenreSize=0 // minimum genreList size",
 									"  ) {",
 									"    var strg = preStrg + \"; \"+pKind+\"[\"+progObj.index+\"] name=\"+progObj.name;",
+									"    ",
 									"    helpers.CompareGreater(strg + \"; name.length\", progObj.name.length, 0);",
+									"    ",
 									"    helpers.CompareSame(strg + \"; type\", progObj.type.toLowerCase(), \"programs\");",
+									"    ",
 									"    helpers.CompareSame(strg + \"; kind\", progObj.kind.toLowerCase(), pKind);",
+									"    ",
 									"    helpers.CompareGreatEq(strg + \"; desc.length\", progObj.desc.length, minDescSize);",
+									"    ",
 									"    if ((progObj.rating !== undefined) && (progObj.rating !== null)) {",
 									"      // progObj.rateList is array of rate values",
 									"      // progObj.rating   is array of rate values",
@@ -997,8 +1071,13 @@
 									"    } else {",
 									"       helpers.CompareEqual(strg + \"; rateList item count\",progObj.rateList.length,0);",
 									"    }",
+									"    ",
 									"    helpers.CompareGreatEq(strg + \"; genreList item count\",progObj.genreList.length, minGenreSize);",
+									"    ",
 									"    helpers.CompareGreater(strg + \"; networkList item count\",progObj.networkList.length, 0);",
+									"    ",
+									"    progHelpers.evalCountProgObj(pKind, preStrg, progObj, minDescSize, minGenreSize);",
+									"    ",
 									"  };",
 									"  ",
 									"  ",
@@ -1142,14 +1221,14 @@
 									"  // ...additional helpers",
 									"  return progHelpers;",
 									"} + '; loadProgHelpers();');"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
-								"id": "6fab6b75-ba46-44be-810f-203af4e5d7c5",
-								"type": "text/javascript",
+								"id": "40e997ca-4367-4635-887f-1fb70cc12be5",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -1180,11 +1259,15 @@
 									"  case \"shows\":",
 									"    postman.setNextRequest(\"Start DANY TV Shows\");",
 									"  break;",
+									"  case \"counts\":",
+									"    postman.setNextRequest(\"Start Count TV Shows\");",
+									"  break;",
 									"  default:",
 									"    postman.setNextRequest(null);",
 									"  break;",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1220,7 +1303,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "5bbe17c2-d3e8-41b2-8193-8714daa79b64",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -1232,19 +1314,21 @@
 									"postman.setGlobalVariable(\"g_dany_ver_shows\", \"v20/dol\");  // values \"v20/dol\"  \"v21/dol\"",
 									"postman.setGlobalVariable(\"g_dany_api_shows\", \"shows\");",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "eb13a670-c91d-43a8-b3a3-fce5f81b618d",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									" progHelpers.initCountProgObj();",
 									"",
 									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
 									"var reqString = request.name;",
@@ -1257,7 +1341,8 @@
 									"}",
 									"",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1969,20 +2054,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "eb7a483d-9f90-447a-b88f-ffb043c5a982",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "e8cb55e3-12fe-404e-ad92-7f61dbd38ace",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -1999,6 +2083,7 @@
 									"    return;",
 									"}",
 									"",
+									" progHelpers.dispCountProgObj(\"TV Shows\");",
 									"",
 									"// set next test group via environment variable",
 									"switch(environment.e_exec_tests.toLowerCase()) {",
@@ -2018,7 +2103,8 @@
 									"    postman.setNextRequest(null);",
 									"  break;",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2054,7 +2140,6 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "8f919614-36e0-4ad6-a8f5-5bd98025505a",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -2066,14 +2151,14 @@
 									"postman.setGlobalVariable(\"g_dany_ver_movies\", \"v20/dol\"); // values \"v20/dol\"  \"v21/dol\"",
 									"postman.setGlobalVariable(\"g_dany_api_movies\", \"movies\");",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "cfb654da-13c7-4567-98e3-14a867a18563",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -2084,6 +2169,8 @@
 									"var reqString = request.name;",
 									"helpers.checkStatusCode(rspCode, reqString + \": \");",
 									"",
+									"progHelpers.initCountProgObj();",
+									"",
 									"// need expected code to do schema validation",
 									"if (responseCode.code !== rspCode) {",
 									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
@@ -2091,7 +2178,8 @@
 									"}",
 									"",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2802,20 +2890,19 @@
 							"listen": "prerequest",
 							"script": {
 								"id": "43cfc45e-ab52-4fb9-977a-9f2d04c3acae",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
 									"var _ = require('lodash');",
 									"var progHelpers = eval(globals.loadProgHelpers);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						},
 						{
 							"listen": "test",
 							"script": {
 								"id": "c45639fd-4401-43a9-b694-95ece94ec77f",
-								"type": "text/javascript",
 								"exec": [
 									"// load helper functions ",
 									"var helpers = eval(globals.loadHelpers);",
@@ -2832,6 +2919,7 @@
 									"    return;",
 									"}",
 									"",
+									" progHelpers.dispCountProgObj(\"Movies\");",
 									"",
 									"// set next test group via environment variable",
 									"switch(environment.e_exec_tests.toLowerCase()) {",
@@ -2851,7 +2939,8 @@
 									"    postman.setNextRequest(null);",
 									"  break;",
 									"}"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2876,6 +2965,612 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Dany Counts",
+			"item": [
+				{
+					"name": "Start Count TV Shows",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5bbe17c2-d3e8-41b2-8193-8714daa79b64",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"// DANY Show base API and version",
+									"postman.setGlobalVariable(\"g_dany_ver_filter\", \"v20/dol\"); // values \"v20/dol\"",
+									"postman.setGlobalVariable(\"g_dany_ver_shows\", \"v20/dol\");  // values \"v20/dol\"  \"v21/dol\"",
+									"postman.setGlobalVariable(\"g_dany_api_shows\", \"shows\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "eb13a670-c91d-43a8-b3a3-fce5f81b618d",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									" progHelpers.initCountProgObj();",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = request.name;",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totalCount = respBody.count;",
+									"postman.setGlobalVariable(\"g_shows_totalCount\", totalCount);",
+									"",
+									"var reqItems = 10;",
+									"var reqNumber = totalCount / (reqItems * 10);",
+									"var reqMax = totalCount / reqItems;",
+									"var startList = [];",
+									"for (var i = 1; i < reqNumber ; i++) {",
+									"    startList.add(Math.floor(Math.random() * reqMax));",
+									"}",
+									"",
+									"console.log(reqString + \", Total Count = \" + totalCount);",
+									"console.log(reqString + \", List Length = \" + startList.length);",
+									"console.log(reqString + \", Random List = \" + startList);",
+									"",
+									"postman.setGlobalVariable(\"g_shows_startList\", startList.join(\",\"));",
+									"postman.setGlobalVariable(\"g_shows_startIndex\", 0);",
+									"",
+									"postman.setGlobalVariable(\"g_api_totalItems\", reqItems);",
+									"progHelpers.initCountProgObj();",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}/count.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}",
+								"count.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Count TV Shows",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "02a166c9-5734-4f04-b2e4-ed8a252dbb41",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var reqString = request.name;",
+									"",
+									"var index = Number(globals.g_shows_startIndex);",
+									"var startList = globals.g_shows_startList.split(\",\");",
+									"",
+									"totalItems = parseInt(globals.g_api_totalItems);",
+									"postman.setGlobalVariable(\"g_api_startItem\", startList[index] * totalItems);",
+									"",
+									"console.log(reqString + \": index=\" + globals.g_shows_startIndex + \", startItem=\" + globals.g_api_startItem);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "741804ce-ab28-43a6-a315-177cec0f3345",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = request.name;",
+									"var startItem = parseInt(globals.g_api_startItem);",
+									"var totalItems = parseInt(globals.g_api_totalItems);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var index = Number(globals.g_shows_startIndex);",
+									"var startList = globals.g_shows_startList.split(\",\");",
+									"var reqString = \"Get Count TV Shows: index \" + index + \" of \" + startList.length + ",
+									"     \" start=\"  + startItem + \" items=\"+ totalItems;",
+									"var infoPreStrg = \"Count TV Shows, \" + startItem + \", \" + totalItems;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"if ( index < startList.length - 1) {",
+									"    index++;",
+									"    postman.setGlobalVariable(\"g_shows_startIndex\",index);",
+									"    postman.setNextRequest(APIrequestName);",
+									"}",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"// Eval response",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var showList = respBody.shows;",
+									"",
+									"",
+									"var sType = \"show\";",
+									"var showInfoList = [];",
+									"var showInfoObj;",
+									"var showRsp, cnt=0, strg;",
+									"for (var showObj of showList) {",
+									"    showRsp = showObj.show;",
+									"    showInfoObj = progHelpers.setProgObj(sType,showRsp,cnt);",
+									"    showInfoList.push(showInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in showInfoList) {",
+									"    progHelpers.dispProgObj(sType,infoPreStrg,showInfoList[i]);",
+									"    progHelpers.evalCountProgObj(sType,infoPreStrg,showInfoList[i],5,1); // desc.length >= 5; genreList.length >= 1",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?sort=name&itemStart={{g_api_startItem}}&totalItems={{g_api_totalItems}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_shows}}.json"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "name"
+								},
+								{
+									"key": "itemStart",
+									"value": "{{g_api_startItem}}"
+								},
+								{
+									"key": "totalItems",
+									"value": "{{g_api_totalItems}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End Count TV Shows",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "eb7a483d-9f90-447a-b88f-ffb043c5a982",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8cb55e3-12fe-404e-ad92-7f61dbd38ace",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = request.name;",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									" progHelpers.dispCountProgObj(\"TV Shows\",parseInt(globals.g_shows_totalCount));",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"counts\":",
+									"    postman.setNextRequest(\"Start Count Movies\");",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_shows}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_shows}}.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Count Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8f919614-36e0-4ad6-a8f5-5bd98025505a",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"// DANY Movie base API and version",
+									"postman.setGlobalVariable(\"g_dany_ver_filter\", \"v20/dol\"); // values \"v20/dol\"",
+									"postman.setGlobalVariable(\"g_dany_ver_movies\", \"v20/dol\"); // values \"v20/dol\"  \"v21/dol\"",
+									"postman.setGlobalVariable(\"g_dany_api_movies\", \"movies\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "cfb654da-13c7-4567-98e3-14a867a18563",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var reqString = request.name;",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"progHelpers.initCountProgObj();",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totalCount = respBody.count;",
+									"postman.setGlobalVariable(\"g_movies_totalCount\", totalCount);",
+									"",
+									"var reqItems = 10;",
+									"var reqNumber = totalCount / (reqItems * 20);",
+									"var reqMax = totalCount / reqItems;",
+									"var startList = [];",
+									"for (var i = 1; i < reqNumber ; i++) {",
+									"    startList.add(Math.floor(Math.random() * reqMax));",
+									"}",
+									"",
+									"console.log(reqString + \", Total Count = \" + totalCount);",
+									"console.log(reqString + \", List Length = \" + startList.length);",
+									"console.log(reqString + \", Random List = \" + startList);",
+									"",
+									"postman.setGlobalVariable(\"g_movies_startList\", startList.join(\",\"));",
+									"postman.setGlobalVariable(\"g_movies_startIndex\", 0);",
+									"",
+									"postman.setGlobalVariable(\"g_api_totalItems\", reqItems);",
+									"progHelpers.initCountProgObj();"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}/count.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}",
+								"count.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Count Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "02a166c9-5734-4f04-b2e4-ed8a252dbb41",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var reqString = request.name;",
+									"",
+									"var index = Number(globals.g_movies_startIndex);",
+									"var startList = globals.g_movies_startList.split(\",\");",
+									"",
+									"totalItems = parseInt(globals.g_api_totalItems);",
+									"postman.setGlobalVariable(\"g_api_startItem\", startList[index] * totalItems);",
+									"",
+									"console.log(reqString + \": index=\" + globals.g_movies_startIndex + \", startItem=\" + globals.g_api_startItem);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "741804ce-ab28-43a6-a315-177cec0f3345",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var APIrequestName = request.name;",
+									"var startItem = parseInt(globals.g_api_startItem);",
+									"var totalItems = parseInt(globals.g_api_totalItems);",
+									"",
+									"var okCode = Number(pm.variables.get(\"c_ok_code\"));",
+									"var index = Number(globals.g_movies_startIndex);",
+									"var startList = globals.g_movies_startList.split(\",\");",
+									"var reqString = \"Get Count Movies: index \" + index + \" of \" + startList.length + ",
+									"     \" start=\"  + startItem + \" items=\"+ totalItems;",
+									"var infoPreStrg = \"Count Movies, \" + startItem + \", \" + totalItems;",
+									"",
+									"helpers.checkStatusCode(okCode, reqString + \": \");",
+									"",
+									"if ( index < startList.length - 1) {",
+									"    index++;",
+									"    postman.setGlobalVariable(\"g_movies_startIndex\",index);",
+									"    postman.setNextRequest(APIrequestName);",
+									"}",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== okCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									"var respBody = JSON.parse(responseBody);",
+									"var totCount = respBody.count;",
+									"var movieList = respBody.movies;",
+									"",
+									"var mType = \"movie\";",
+									"var movieInfoList = [];",
+									"var movieInfoObj;",
+									"var movieRsp, cnt=0, strg;",
+									"for (var movieObj of movieList) {",
+									"    movieRsp = movieObj.movie;",
+									"    movieInfoObj = progHelpers.setProgObj(mType,movieRsp,cnt);",
+									"    movieInfoList.push(movieInfoObj);",
+									"    cnt+=1;",
+									"}",
+									"",
+									"for (var i in movieInfoList) {",
+									"    progHelpers.dispProgObj(mType,infoPreStrg,movieInfoList[i]);",
+									"    progHelpers.evalCountProgObj(mType,infoPreStrg,movieInfoList[i],5,1); // desc.length >= 5; genreList.length >= 1",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_movies}}.json?sort=name&itemStart={{g_api_startItem}}&totalItems={{g_api_totalItems}}",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_shows}}",
+								"{{g_dany_api_movies}}.json"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "name"
+								},
+								{
+									"key": "itemStart",
+									"value": "{{g_api_startItem}}"
+								},
+								{
+									"key": "totalItems",
+									"value": "{{g_api_totalItems}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End Count Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "eb7a483d-9f90-447a-b88f-ffb043c5a982",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8cb55e3-12fe-404e-ad92-7f61dbd38ace",
+								"exec": [
+									"// load helper functions ",
+									"var helpers = eval(globals.loadHelpers);",
+									"var _ = require('lodash');",
+									"var progHelpers = eval(globals.loadProgHelpers);",
+									"",
+									"var rspCode = Number(pm.variables.get(\"c_bad_code\"));",
+									"var reqString = request.name;",
+									"helpers.checkStatusCode(rspCode, reqString + \": \");",
+									"",
+									"// need expected code to do schema validation",
+									"if (responseCode.code !== rspCode) {",
+									"    console.log(reqString + \", responseCode=\" + responseCode.code);",
+									"    return;",
+									"}",
+									"",
+									" progHelpers.dispCountProgObj(\"Movies\",parseInt(globals.g_movies_totalCount));",
+									"",
+									"// set next test group via environment variable",
+									"switch(environment.e_exec_tests.toLowerCase()) {",
+									"  case \"status\":",
+									"    postman.setNextRequest(null);",
+									"  break; ",
+									"  case \"movies\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"programs\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"shows\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  case \"counts\":",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"  default:",
+									"    postman.setNextRequest(null);",
+									"  break;",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_filter}}/{{g_dany_api_movies}}.json",
+							"host": [
+								"{{g_API_HOST_URL}}"
+							],
+							"path": [
+								"{{g_dany_ver_filter}}",
+								"{{g_dany_api_movies}}.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Count TV Shows and Movies that are have\n  Empty Discriptions\n  No Rating\n  No Network\n  no Genre"
 		},
 		{
 			"name": "DANY Others",
@@ -2955,7 +3650,10 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?a-z={{g_showLetterVal}}",
 									"host": [
@@ -3043,7 +3741,10 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_shows}}/{{g_dany_api_shows}}.json?a-z={{g_showLetterVal}}",
 									"host": [
@@ -3142,7 +3843,10 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?a-z={{g_movieLetterVal}}",
 									"host": [
@@ -3230,7 +3934,10 @@
 							"request": {
 								"method": "GET",
 								"header": [],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{g_API_HOST_URL}}/{{g_dany_ver_movies}}/{{g_dany_api_movies}}.json?a-z={{g_movieLetterVal}}",
 									"host": [
@@ -3264,20 +3971,19 @@
 									"listen": "prerequest",
 									"script": {
 										"id": "a6dd3156-4c48-42bd-b764-61a281d55ef6",
-										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
 											"var helpers = eval(globals.loadHelpers);",
 											"var _ = require('lodash');",
 											"var progHelpers = eval(globals.loadProgHelpers);"
-										]
+										],
+										"type": "text/javascript"
 									}
 								},
 								{
 									"listen": "test",
 									"script": {
 										"id": "c9543e54-2e5f-4df7-810e-f0a85536abd6",
-										"type": "text/javascript",
 										"exec": [
 											"// load helper functions ",
 											"var helpers = eval(globals.loadHelpers);",
@@ -3294,7 +4000,8 @@
 											"    return;",
 											"}",
 											""
-										]
+										],
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -3306,7 +4013,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=1&totalItems=20&video_type=full_only&media_type_filter=shows&genres=adventure&ratings=tvpg&a-z=c&sort=most_popular",
+									"raw": "http://radish.dishanywhere.com/v20/dol/shows.json?itemStart=0&totalItems=10&video_type=full_only&media_type_filter=shows&genres=drama&ratings=tvpg&a-z=c&sort=most_popular",
 									"protocol": "http",
 									"host": [
 										"radish",
@@ -3321,11 +4028,11 @@
 									"query": [
 										{
 											"key": "itemStart",
-											"value": "1"
+											"value": "0"
 										},
 										{
 											"key": "totalItems",
-											"value": "20"
+											"value": "10"
 										},
 										{
 											"key": "video_type",
@@ -3337,7 +4044,7 @@
 										},
 										{
 											"key": "genres",
-											"value": "adventure"
+											"value": "drama"
 										},
 										{
 											"key": "ratings",
